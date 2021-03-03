@@ -16,7 +16,7 @@ export const App: React.FC = () => {
           <Link to="/signin">Sign in</Link>
         </div>
       </div>
-      <div>
+      <div style={{ backgroundColor: "#e0e0e0" }}>
         <Switch>
           <Route path="/dashboard">
             <Dashboard />

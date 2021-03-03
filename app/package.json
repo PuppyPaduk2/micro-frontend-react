@@ -6,8 +6,8 @@
   "scripts": {
     "build": "webpack -c ./config/webpack/build.js --watch",
     "start": "webpack serve -c ./config/webpack/start.js",
-    "unlink:deps": "npm link '@mcfs/routes' '@mcfs/webpack-config' '@mcfs/dashboard' '@mcfs/sign-in'",
-    "link:deps": "npm link '@mcfs/routes' '@mcfs/webpack-config' '@mcfs/dashboard' '@mcfs/sign-in'"
+    "unlink:deps": "npm link '@mcfs/configs' '@mcfs/webpack-config' '@mcfs/dashboard' '@mcfs/sign-in'",
+    "link:deps": "npm link '@mcfs/configs' '@mcfs/webpack-config' '@mcfs/dashboard' '@mcfs/sign-in'"
   },
   "devDependencies": {
     "@svgr/webpack": "^5.5.0",

@@ -7,8 +7,8 @@
   "scripts": {
     "build": "webpack -c ./config/webpack/build.js --watch",
     "start": "webpack serve -c ./config/webpack/start.js",
-    "unlink:deps": "npm unlink '@mcfs/routes' '@mcfs/webpack-config'",
-    "link:deps": "npm link '@mcfs/routes' '@mcfs/webpack-config'"
+    "unlink:deps": "npm unlink '@mcfs/configs' '@mcfs/webpack-config'",
+    "link:deps": "npm link '@mcfs/configs' '@mcfs/webpack-config'"
   },
   "devDependencies": {
     "@svgr/webpack": "^5.5.0",

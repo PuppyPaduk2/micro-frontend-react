@@ -49,6 +49,7 @@ function start(payload) {
     output: output({
       filename: "index.js",
       path: path.resolve(process.cwd(), "dist"),
+      publicPath: "/",
     }),
     plugins: plugins([
       new MiniCssExtractPlugin(),
@@ -56,7 +57,10 @@ function start(payload) {
     ]),
     devServer: devServer({
       port,
-      historyApiFallback: true,
+      contentBase: path.join(__dirname, "dist"),
+      historyApiFallback: {
+        disableDotRule: true,
+      },
     }),
   };
 }

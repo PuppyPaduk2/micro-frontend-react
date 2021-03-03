@@ -1,4 +1,4 @@
 const { start } = require("@mcfs/webpack-config");
-const { routes } = require("@mcfs/routes");
+const { services } = require("@mcfs/configs");
 
-module.exports = start({ port: routes.dashboard.port });
+module.exports = start({ port: services.configs.dashboard.port });
