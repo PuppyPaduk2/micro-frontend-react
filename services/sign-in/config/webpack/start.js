@@ -1,3 +1,4 @@
 const { start } = require("@mcfs/webpack-config");
+const { routes } = require("@mcfs/routes");
 
-module.exports = start({ routeKey: "signIn" });
+module.exports = start({ port: routes.signIn.port });

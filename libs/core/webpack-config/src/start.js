@@ -2,23 +2,21 @@ const path = require("path");
 const { requireCwd } = require("./require-cwd");
 
 function start(payload) {
-  const routeKey = payload.routeKey;
-  const entry = payload.entry || "./src/index.tsx";
-  const mode = payload.mode || "development";
-  const externals = payload.externals || ((value) => value);
-  const output = payload.output || ((value) => value);
-  const plugins = payload.plugins || ((value) => value);
-  const devServer = payload.devServer || ((value) => value);
+  const _payload = payload || {};
+  const port = _payload.port;
+  const entry = _payload.entry || "./src/index.tsx";
+  const mode = _payload.mode || "development";
+  const externals = _payload.externals || ((value) => value);
+  const output = _payload.output || ((value) => value);
+  const plugins = _payload.plugins || ((value) => value);
+  const devServer = _payload.devServer || ((value) => value);
 
-  if (typeof routeKey !== "string") {
-    throw new Error("Set routeKey for webpack config");
+  if (typeof port !== "number") {
+    throw new Error("Set 'port' for webpack config");
   }
 
   const MiniCssExtractPlugin = requireCwd("mini-css-extract-plugin");
   const HtmlWebpackPlugin = requireCwd("html-webpack-plugin");
-  const { routes } = requireCwd("@mcfs/routes");
-
-  const route = routes[routeKey];
 
   return {
     entry,
@@ -57,7 +55,7 @@ function start(payload) {
       new HtmlWebpackPlugin({ template: "./public/index.html" }),
     ]),
     devServer: devServer({
-      port: route.port,
+      port,
       historyApiFallback: true,
     }),
   };

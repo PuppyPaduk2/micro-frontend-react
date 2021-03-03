@@ -4,4 +4,9 @@ const routes = {
   dashboard: { port: 5002, publicPath: "/dashboard" },
 };
 
-module.exports = { routes };
+const appMenu = [
+  { path: routes.dashboard.publicPath, title: "Dashboard" },
+  { path: routes.signIn.publicPath, title: "Sign in" },
+];
+
+module.exports = { routes, appMenu };
