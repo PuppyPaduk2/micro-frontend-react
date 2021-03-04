@@ -6,6 +6,7 @@ const importWrapper = (value: Promise<any>) => value
   .catch((error) => console.error(error));
 
 const DashboardApp = React.lazy(() => importWrapper(import("dashboard/DashboardApp")));
+const SignInApp = React.lazy(() => importWrapper(import("signIn/SignInApp")));
 
 export const App: React.FC = () => {
   console.log("App");
@@ -28,7 +29,9 @@ export const App: React.FC = () => {
             </React.Suspense>
           </Route>
           <Route path="/*">
-            {/* <SignIn /> */}
+            <React.Suspense fallback="">
+              <SignInApp />
+            </React.Suspense>
           </Route>
         </Switch>
       </div>

@@ -3,7 +3,8 @@ const { services } = require("@mcfs/configs");
 const webpack = require("webpack");
 
 const { ModuleFederationPlugin } = webpack.container;
-const { port } = services.configs.dashboard;
+const name = "dashboard";
+const { port } = services.configs[name];
 
 module.exports = start2({
   port,
@@ -12,12 +13,12 @@ module.exports = start2({
   plugins: (value) => [
     ...value,
     new ModuleFederationPlugin({
-      name: "dashboard",
-      library: { type: "var", name: "dashboard" },
+      name,
+      library: { type: "var", name },
       filename: "remote.js",
       remotes: {},
       exposes: {
-        "./DashboardApp": "./exposes/dashboard-app.ts",
+        "./DashboardApp": "./exposes/app.ts",
       },
       shared: {},
     }),
