@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
-import { App as SignIn } from "@mcfs/sign-in";
-import { App as Dashboard } from "@mcfs/dashboard";
+
+const importWrapper = (value: Promise<any>) => value
+  .then((module) => module)
+  .catch((error) => console.error(error));
+
+const DashboardApp = React.lazy(() => importWrapper(import("dashboard/DashboardApp")));
 
 export const App: React.FC = () => {
   console.log("App");
@@ -19,10 +23,12 @@ export const App: React.FC = () => {
       <div style={{ backgroundColor: "#e0e0e0" }}>
         <Switch>
           <Route path="/dashboard">
-            <Dashboard />
+            <React.Suspense fallback="">
+              <DashboardApp />
+            </React.Suspense>
           </Route>
           <Route path="/*">
-            <SignIn />
+            {/* <SignIn /> */}
           </Route>
         </Switch>
       </div>
