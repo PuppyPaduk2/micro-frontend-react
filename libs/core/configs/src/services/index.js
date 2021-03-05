@@ -28,17 +28,10 @@ const configs = {
   },
 };
 
-const convertExposes = (exposes) => {
-  const keys = Object.keys(exposes);
-  const result = {};
-
-  for (let index = 0; index < keys.length; index += 1) {
-    const key = keys[index];
-
-    result[exposes[key].key] = exposes[key].path;
-  }
-
-  return result;
-};
+const convertExposes = (exposes) =>
+  Object.entries(exposes).reduce(
+    (res, [, { key, path }]) => ({ ...res, [key]: path }),
+    {}
+  );
 
 module.exports = { configs, nameRemoteScript, convertExposes };
