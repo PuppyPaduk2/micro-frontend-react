@@ -9,12 +9,12 @@ export const ServiceWrapper: React.FC<{
 }> = ({ url, scope, modulePath }) => {
   const { ready, failed } = useDynamicScript({ url });
 
-  if (!ready) {
-    return <h2>Loading dynamic script: {url}</h2>;
-  }
-
   if (failed) {
     return <h2>Failed to load dynamic script: {url}</h2>;
+  }
+
+  if (!ready) {
+    return <h2>Loading dynamic script: {url}</h2>;
   }
 
   const Component = React.lazy(loadComponent(scope, modulePath));

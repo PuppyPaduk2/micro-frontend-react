@@ -3,7 +3,8 @@ const { services } = require("@mcfs/configs");
 const webpack = require("webpack");
 
 const { ModuleFederationPlugin } = webpack.container;
-const { port } = services.configs.composite;
+const name = "composite";
+const { scope, port, exposes } = services.configs[name];
 
 module.exports = start2({
   port,
@@ -12,14 +13,11 @@ module.exports = start2({
   plugins: (value) => [
     ...value,
     new ModuleFederationPlugin({
-      name: "composite",
-      library: { type: "var", name: "composite" },
-      filename: "remote.js",
-      remotes: {
-        dashboard: "dashboard",
-        signIn: "signIn",
-      },
-      exposes: {},
+      name: scope,
+      library: { type: "var", name: scope },
+      filename: services.nameRemoteScript,
+      exposes: services.convertExposes(exposes),
+      remotes: {},
       shared: {},
     }),
   ],
