@@ -1,12 +1,6 @@
 import * as React from 'react';
 import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
-
-const importWrapper = (value: Promise<any>) => value
-  .then((module) => module)
-  .catch((error) => console.error(error));
-
-const DashboardApp = React.lazy(() => importWrapper(import("dashboard/DashboardApp")));
-const SignInApp = React.lazy(() => importWrapper(import("signIn/SignInApp")));
+import { ServiceWrapper } from "./libs/service-wrapper";
 
 export const App: React.FC = () => {
   console.log("App");
@@ -23,15 +17,19 @@ export const App: React.FC = () => {
       </div>
       <div style={{ backgroundColor: "#e0e0e0" }}>
         <Switch>
-          <Route path="/dashboard">
-            <React.Suspense fallback="">
-              <DashboardApp />
-            </React.Suspense>
+          <Route path="/signin">
+            <ServiceWrapper
+              url="http://localhost:5001/remote.js"
+              scope="signIn"
+              modulePath="./SignInApp"
+            />
           </Route>
-          <Route path="/*">
-            <React.Suspense fallback="">
-              <SignInApp />
-            </React.Suspense>
+          <Route path="/dashboard">
+            <ServiceWrapper
+              url="http://localhost:5002/remote.js"
+              scope="dashboard"
+              modulePath="./DashboardApp"
+            />
           </Route>
         </Switch>
       </div>
