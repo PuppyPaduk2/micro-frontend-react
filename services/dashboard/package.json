@@ -6,9 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack --watch",
-    "start": "npm run link:deps && webpack serve",
-    "unlink:deps": "npm unlink '@mcfs/configs' '@mcfs/webpack-config'",
-    "link:deps": "npm link '@mcfs/configs' '@mcfs/webpack-config'"
+    "start": "npm run link:deps && webpack serve"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.13.0",
