@@ -1,0 +1,19 @@
+{
+  "name": "micro-frontend-react",
+  "version": "0.0.1",
+  "description": "This repo show how use module federation plugin from webpack.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EvgenyiFedotov/micro-frontend-react.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EvgenyiFedotov/micro-frontend-react/issues"
+  },
+  "homepage": "https://github.com/EvgenyiFedotov/micro-frontend-react#readme"
+}
