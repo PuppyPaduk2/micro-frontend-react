@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
 import { ServiceWrapper } from "./libs/service-wrapper";
-import { routes } from "@mcfs/configs";
+import { routes } from "@micro/configs";
 
 const { menu, content } = routes;
 

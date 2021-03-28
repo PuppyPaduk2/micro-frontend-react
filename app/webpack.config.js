@@ -1,5 +1,5 @@
-const { start2 } = require("@mcfs/webpack-config");
-const { services } = require("@mcfs/configs");
+const { start2 } = require("@micro/webpack-config");
+const { services } = require("@micro/configs");
 const webpack = require("webpack");
 
 const { ModuleFederationPlugin } = webpack.container;

@@ -4,8 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --watch",
-    "start": "npm run link:deps && webpack serve"
+    "build": "webpack",
+    "start": "webpack serve"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.13.0",
@@ -49,5 +49,13 @@
     "react-spinners": "^0.10.6",
     "styled-components": "^5.2.1",
     "uuid": "^8.3.2"
+  },
+  "spoctopus": {
+    "packages": {
+      "links": [
+        "@micro/webpack-config",
+        "@micro/configs"
+      ]
+    }
   }
 }

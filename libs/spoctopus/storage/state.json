@@ -1,0 +1,25 @@
+{
+  "version": "0.0.1",
+  "packages": {
+    "linked": {
+      "micro-frontend-react": {
+        "pathRelative": "../../.."
+      },
+      "@mcfs/configs": {
+        "pathRelative": "../../configs"
+      },
+      "simple": {
+        "pathRelative": "../../simple"
+      },
+      "@mcfs/webpack-config": {
+        "pathRelative": "../../webpack-config"
+      },
+      "@micro/webpack-config": {
+        "pathRelative": "../../webpack-config"
+      },
+      "@micro/configs": {
+        "pathRelative": "../../configs"
+      }
+    }
+  }
+}
