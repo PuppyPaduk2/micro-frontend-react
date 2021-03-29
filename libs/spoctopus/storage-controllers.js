@@ -1,3 +1,4 @@
+const $path = require("path");
 const $fs = require("./fs");
 const $paths = require("./paths");
 const { PACKAGE, PATHS } = require("./config");
@@ -6,8 +7,9 @@ const { parsePackageName } = require("./parse-package-name");
 module.exports = {
   createStateController: (payload = {}) => {
     const dir = payload.dir;
-    const pathStorageFolder = dir || PATHS.STORAGE_DIR;
-    const pathStateFile = $paths.stateFile(pathStorageFolder);
+    const pathDefaultStorageDir = $path.resolve(__dirname, PATHS.STORAGE_DIR);
+    const pathStorageDir = dir || pathDefaultStorageDir;
+    const pathStateFile = $paths.stateFile(pathStorageDir);
 
     let state = {};
     let packages = {};
@@ -34,8 +36,8 @@ module.exports = {
         return controller;
       },
       link: () => {
-        const pathRelative = $paths.relativeCwd({ from: pathStorageFolder });
-        const pathPackage = $paths.resolve(pathStorageFolder, pathRelative);
+        const pathRelative = $paths.relativeCwd({ from: pathStorageDir });
+        const pathPackage = $path.resolve(pathStorageDir, pathRelative);
         const pathPackageJson = $paths.packageJson(pathPackage);
         const packageJson = $fs.readJsonSync(pathPackageJson);
         linked[packageJson.name] = { pathRelative };
@@ -58,13 +60,13 @@ module.exports = {
         const tail = [scope, name].filter(Boolean);
         const pathNodeModulesPackage = $paths.nodeModulesCwd(...tail);
         const { pathRelative } = link;
-        const pathPackage = $paths.resolve(pathStorageFolder, pathRelative);
+        const pathPackage = $path.resolve(pathStorageDir, pathRelative);
 
         if ($fs.existsSync(pathNodeModulesPackage)) {
           $fs.rmSync(pathNodeModulesPackage);
         }
 
-        $fs.mkdirRecSync($paths.parse(pathNodeModulesPackage).dir);
+        $fs.mkdirRecursiveSync($path.parse(pathNodeModulesPackage).dir);
         $fs.symlinkSync(pathPackage, pathNodeModulesPackage);
         return controller;
       },
@@ -84,7 +86,7 @@ module.exports = {
       },
     };
 
-    $fs.mkdirRecSync(pathStorageFolder);
+    $fs.mkdirRecursiveSync(pathStorageDir);
     if (!$fs.existsSync(pathStateFile)) $fs.writeJsonSync(pathStateFile, {});
 
     return controller;
