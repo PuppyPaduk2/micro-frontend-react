@@ -2,23 +2,29 @@
   "version": "0.0.1",
   "packages": {
     "linked": {
-      "micro-frontend-react": {
-        "pathRelative": "../../.."
+      "ts-server-client-template": {
+        "pathRelative": "../../../app"
       },
-      "@mcfs/configs": {
+      "@micro/configs": {
         "pathRelative": "../../configs"
       },
       "simple": {
         "pathRelative": "../../simple"
       },
-      "@mcfs/webpack-config": {
-        "pathRelative": "../../webpack-config"
+      "spoctopus": {
+        "pathRelative": ".."
       },
       "@micro/webpack-config": {
         "pathRelative": "../../webpack-config"
       },
-      "@micro/configs": {
-        "pathRelative": "../../configs"
+      "@micro/service-template": {
+        "pathRelative": "../../../services/_template"
+      },
+      "@micro/dashboard": {
+        "pathRelative": "../../../services/dashboard"
+      },
+      "@micro/sign-in": {
+        "pathRelative": "../../../services/sign-in"
       }
     }
   }

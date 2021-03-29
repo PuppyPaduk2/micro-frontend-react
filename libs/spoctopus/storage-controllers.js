@@ -1,7 +1,9 @@
 const $path = require("path");
+const $glob = require("glob");
+
 const $fs = require("./fs");
 const $paths = require("./paths");
-const { PACKAGE, PATHS } = require("./config");
+const { PACKAGE, PATHS, SEARCH } = require("./config");
 const { parsePackageName } = require("./parse-package-name");
 
 module.exports = {
@@ -35,11 +37,13 @@ module.exports = {
         $fs.writeJsonSync(pathStateFile, controller.state());
         return controller;
       },
-      link: () => {
-        const pathRelative = $paths.relativeCwd({ from: pathStorageDir });
+      link: (payload = {}) => {
+        const dir = payload.dir || process.cwd();
+        const pathRelative = $path.relative(pathStorageDir, dir);
         const pathPackage = $path.resolve(pathStorageDir, pathRelative);
-        const pathPackageJson = $paths.packageJson(pathPackage);
+        const pathPackageJson = $path.resolve(pathPackage, PATHS.PACKAGE_JSON);
         const packageJson = $fs.readJsonSync(pathPackageJson);
+        if (linked[packageJson.name]) throw new Error("Package linked already");
         linked[packageJson.name] = { pathRelative };
         return controller;
       },
@@ -79,6 +83,26 @@ module.exports = {
 
         if ($fs.existsSync(pathNodeModulesPackage)) {
           $fs.rmRecursiveSync(pathNodeModulesPackage);
+        }
+
+        return controller;
+      },
+      linkSearch: async () => {
+        const paths = await new Promise((resolve, reject) => {
+          $glob(
+            SEARCH.PATTERN,
+            { cwd: process.cwd(), ignore: SEARCH.IGNORE },
+            (err, paths) => {
+              if (err) reject(err);
+              else resolve(paths);
+            }
+          );
+        });
+
+        if (paths instanceof Array) {
+          paths.forEach((path) => {
+            controller.link({ dir: $path.parse(path).dir });
+          });
         }
 
         return controller;

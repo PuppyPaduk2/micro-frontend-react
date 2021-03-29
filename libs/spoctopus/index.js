@@ -4,7 +4,7 @@ const { Command } = require("commander");
 const { PACKAGE } = require("./config");
 const { createConfigController } = require("./config-controllers");
 const { createStateController } = require("./storage-controllers");
-const { actionWrapperSync } = require("./action-wrapper");
+const { actionSync, action } = require("./action-wrapper");
 
 const program = new Command();
 
@@ -15,7 +15,7 @@ program
   .command("link [packageName]")
   .option("-d, --dir <dir>", "Dir for symlink")
   .action((packageName, options) => {
-    actionWrapperSync({
+    actionSync({
       callback: () => {
         const { dir } = options;
         const stateController = createStateController().read();
@@ -35,10 +35,21 @@ program
       },
       messageDone: "Package linked",
     });
+  })
+  .command("search")
+  .action(() => {
+    action({
+      callback: async () => {
+        const stateController = createStateController().read();
+        await stateController.linkSearch();
+        stateController.write();
+      },
+      messageDone: "Packages searched",
+    });
   });
 
 program.command("unlink [packageName]").action((packageName) => {
-  actionWrapperSync({
+  actionSync({
     callback: () => {
       const stateController = createStateController().read();
 
@@ -62,7 +73,7 @@ program.command("unlink [packageName]").action((packageName) => {
 
 // Config
 program.command("add <packageName>").action((packageName) => {
-  actionWrapperSync({
+  actionSync({
     callback: () => {
       const configController = createConfigController({ path });
       configController.read().add({ packageName }).write();

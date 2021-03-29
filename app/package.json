@@ -52,7 +52,11 @@
   },
   "spoctopus": {
     "packages": {
-      "links": {}
+      "links": {
+        "@micro/configs": {
+          "dir": "./node_modules"
+        }
+      }
     }
   }
 }

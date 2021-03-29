@@ -6,4 +6,8 @@ module.exports = {
     PACKAGE_JSON: "./package.json",
     NODE_MODULES: "./node_modules",
   },
+  SEARCH: {
+    PATTERN: "**/package.json",
+    IGNORE: ["package.json", "**/node_modules/**"],
+  },
 };
