@@ -11,27 +11,31 @@ const program = new Command();
 program.version(PACKAGE.version);
 
 // State
-program.command("link [packageName]").action((packageName) => {
-  actionWrapperSync({
-    callback: () => {
-      const stateController = createStateController().read();
+program
+  .command("link [packageName]")
+  .option("-d, --dir <dir>", "Dir for symlink")
+  .action((packageName, options) => {
+    actionWrapperSync({
+      callback: () => {
+        const { dir } = options;
+        const stateController = createStateController().read();
 
-      if (packageName) {
-        const configController = createConfigController().read();
-        configController.link({ packageName }).write();
-        try {
-          stateController.symlink({ packageName });
-        } catch (error) {
-          configController.unlink({ packageName }).write();
-          throw error;
+        if (packageName) {
+          const configController = createConfigController().read();
+          configController.link({ packageName, dir }).write();
+          try {
+            stateController.symlink({ packageName, dir });
+          } catch (error) {
+            configController.unlink({ packageName }).write();
+            throw error;
+          }
+        } else {
+          stateController.link().write();
         }
-      } else {
-        stateController.link().write();
-      }
-    },
-    messageDone: "Package linked",
+      },
+      messageDone: "Package linked",
+    });
   });
-});
 
 program.command("unlink [packageName]").action((packageName) => {
   actionWrapperSync({
@@ -40,11 +44,12 @@ program.command("unlink [packageName]").action((packageName) => {
 
       if (packageName) {
         const configController = createConfigController().read();
+        const { dir } = configController.takeLink({ packageName });
         configController.unlink({ packageName }).write();
         try {
-          stateController.unsling({ packageName });
+          stateController.unsling({ packageName, dir });
         } catch (error) {
-          configController.link({ packageName }).write();
+          configController.link({ packageName, dir }).write();
           throw error;
         }
       } else {

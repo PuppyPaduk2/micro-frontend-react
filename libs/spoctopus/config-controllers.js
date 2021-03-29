@@ -1,6 +1,6 @@
 const $fs = require("./fs");
 const $paths = require("./paths");
-const { PACKAGE } = require("./config");
+const { PACKAGE, PATHS } = require("./config");
 const { parsePackageName } = require("./parse-package-name");
 
 module.exports = {
@@ -9,11 +9,11 @@ module.exports = {
     let config = {};
     let packages = {};
     let depends = {};
-    let links = [];
+    let links = {};
 
     const controller = {
       config: () => {
-        if (links.length) packages.links = links;
+        if (Object.keys(links).length) packages.links = links;
         if (Object.keys(depends).length) packages.depends = depends;
         if (Object.keys(packages).length) config.packages = packages;
         return config;
@@ -23,7 +23,7 @@ module.exports = {
         config = pack[PACKAGE.name] || {};
         packages = config.packages || {};
         depends = packages.depends || {};
-        links = packages.links || [];
+        links = packages.links || {};
         return controller;
       },
       write: () => {
@@ -31,24 +31,33 @@ module.exports = {
         $fs.writeJsonSync($paths.packageJsonCwd(), pack);
         return controller;
       },
+      takeLink: (payload) => {
+        const { nameFull } = parsePackageName(payload.packageName);
+        return links[nameFull] || null;
+      },
       link: (payload) => {
         const { nameFull } = parsePackageName(payload.packageName);
+        const dir = payload.dir || PATHS.NODE_MODULES;
 
         if (pack.name === nameFull) {
           throw new Error("Package are linking self");
         }
 
-        if (!links.includes(nameFull)) {
-          links.push(nameFull);
+        if (links[nameFull]) {
+          throw new Error("Package linked already");
+        }
+
+        console.log(links, nameFull);
+
+        if (!links[nameFull]) {
+          links[nameFull] = { dir };
         }
 
         return controller;
       },
       unlink: (payload) => {
         const { nameFull } = parsePackageName(payload.packageName);
-        const index = links.indexOf(nameFull);
-        if (index === -1) throw new Error("Package didn't link");
-        links.splice(index, 1);
+        delete links[nameFull];
         return controller;
       },
       add: () => {

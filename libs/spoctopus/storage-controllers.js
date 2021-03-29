@@ -51,6 +51,7 @@ module.exports = {
       },
       symlink: (payload) => {
         const { scope, name, nameFull } = parsePackageName(payload.packageName);
+        const dir = payload.dir || PATHS.NODE_MODULES;
         const link = linked[nameFull];
 
         if (!link) {
@@ -58,12 +59,12 @@ module.exports = {
         }
 
         const tail = [scope, name].filter(Boolean);
-        const pathNodeModulesPackage = $paths.nodeModulesCwd(...tail);
+        const pathNodeModulesPackage = $paths.resolveCwd(dir, ...tail);
         const { pathRelative } = link;
         const pathPackage = $path.resolve(pathStorageDir, pathRelative);
 
         if ($fs.existsSync(pathNodeModulesPackage)) {
-          $fs.rmSync(pathNodeModulesPackage);
+          $fs.rmRecursiveSync(pathNodeModulesPackage);
         }
 
         $fs.mkdirRecursiveSync($path.parse(pathNodeModulesPackage).dir);
@@ -72,11 +73,12 @@ module.exports = {
       },
       unsling: (payload) => {
         const { scope, name } = parsePackageName(payload.packageName);
+        const dir = payload.dir || PATHS.NODE_MODULES;
         const tail = [scope, name].filter(Boolean);
-        const pathNodeModulesPackage = $paths.nodeModulesCwd(...tail);
+        const pathNodeModulesPackage = $paths.resolveCwd(dir, ...tail);
 
         if ($fs.existsSync(pathNodeModulesPackage)) {
-          $fs.rmSync(pathNodeModulesPackage);
+          $fs.rmRecursiveSync(pathNodeModulesPackage);
         }
 
         return controller;

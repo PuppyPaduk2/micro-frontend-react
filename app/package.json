@@ -52,10 +52,7 @@
   },
   "spoctopus": {
     "packages": {
-      "links": [
-        "@micro/webpack-config",
-        "@micro/configs"
-      ]
+      "links": {}
     }
   }
 }
