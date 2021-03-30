@@ -55,6 +55,9 @@
       "links": {
         "@micro/configs": {
           "dir": "./node_modules"
+        },
+        "@micro/webpack-config": {
+          "dir": "./libs"
         }
       }
     }

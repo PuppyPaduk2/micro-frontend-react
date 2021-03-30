@@ -1,16 +1,15 @@
 const $path = require("path");
-const $glob = require("glob");
 
 const $fs = require("./fs");
 const $paths = require("./paths");
 const { PACKAGE, PATHS, SEARCH } = require("./config");
 const { parsePackageName } = require("./parse-package-name");
+const { search } = require("./search");
 
 module.exports = {
   createStateController: (payload = {}) => {
-    const dir = payload.dir;
     const pathDefaultStorageDir = $path.resolve(__dirname, PATHS.STORAGE_DIR);
-    const pathStorageDir = dir || pathDefaultStorageDir;
+    const pathStorageDir = payload.storageDir || pathDefaultStorageDir;
     const pathStateFile = $paths.stateFile(pathStorageDir);
 
     let state = {};
@@ -55,7 +54,7 @@ module.exports = {
       },
       symlink: (payload) => {
         const { scope, name, nameFull } = parsePackageName(payload.packageName);
-        const dir = payload.dir || PATHS.NODE_MODULES;
+        const dir = payload.dir;
         const link = linked[nameFull];
 
         if (!link) {
@@ -63,7 +62,7 @@ module.exports = {
         }
 
         const tail = [scope, name].filter(Boolean);
-        const pathNodeModulesPackage = $paths.resolveCwd(dir, ...tail);
+        const pathNodeModulesPackage = $path.resolve(dir, ...tail);
         const { pathRelative } = link;
         const pathPackage = $path.resolve(pathStorageDir, pathRelative);
 
@@ -88,15 +87,9 @@ module.exports = {
         return controller;
       },
       linkSearch: async () => {
-        const paths = await new Promise((resolve, reject) => {
-          $glob(
-            SEARCH.PATTERN,
-            { cwd: process.cwd(), ignore: SEARCH.IGNORE },
-            (err, paths) => {
-              if (err) reject(err);
-              else resolve(paths);
-            }
-          );
+        const paths = await search(SEARCH.PATTERN, {
+          cwd: process.cwd(),
+          ignore: SEARCH.IGNORE,
         });
 
         if (paths instanceof Array) {
