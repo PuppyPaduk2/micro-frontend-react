@@ -8,10 +8,6 @@ const create = (payload = {}) => {
   const dir = path.resolve(process.cwd(), defDir);
   const stateFile = path.resolve(dir, PATHS.STATE_FILE);
 
-  console.log(process.cwd());
-  console.log(defDir);
-  console.log(dir);
-
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   if (!fs.existsSync(stateFile)) fs.writeFileSync(stateFile, "{}");
 };
