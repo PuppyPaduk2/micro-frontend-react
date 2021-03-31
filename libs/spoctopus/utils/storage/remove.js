@@ -1,13 +1,11 @@
 const fs = require("fs");
-const path = require("path");
 
-const { FULL_PATHS } = require("../../constants");
+const { config } = require("../action/config");
 
-const remove = (payload = {}) => {
-  const defDir = payload.dir || FULL_PATHS.STORAGE_DIR;
-  const dir = path.resolve(process.cwd(), defDir);
+const remove = () => {
+  const { storageDir } = config();
 
-  if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true });
+  if (fs.existsSync(storageDir)) fs.rmSync(storageDir, { recursive: true });
 };
 
 module.exports = { remove };

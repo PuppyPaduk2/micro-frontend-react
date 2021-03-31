@@ -1,14 +1,12 @@
-const path = require("path");
 const fs = require("fs");
 
-const { PATHS, FULL_PATHS } = require("../../constants");
+const { config, extConfig } = require("../action/config");
 
-const create = (payload = {}) => {
-  const defDir = payload.dir || FULL_PATHS.STORAGE_DIR;
-  const dir = path.resolve(process.cwd(), defDir);
-  const stateFile = path.resolve(dir, PATHS.STATE_FILE);
+const create = () => {
+  const { storageDir } = config();
+  const { stateFile } = extConfig();
 
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(storageDir)) fs.mkdirSync(storageDir, { recursive: true });
   if (!fs.existsSync(stateFile)) fs.writeFileSync(stateFile, "{}");
 };
 
