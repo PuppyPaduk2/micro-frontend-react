@@ -1,0 +1,35 @@
+{
+  "hashPassword": "$2b$10$dBKixifMRulB1.vDYCB4vuvofBrvwDYoWqKHr1mSzYZiGOlekDrbK",
+  "packages": {
+    "linked": {
+      "micro-frontend-react": {
+        "relativePath": "../../.."
+      },
+      "ts-server-client-template": {
+        "relativePath": "../../../app"
+      },
+      "spoctopus": {
+        "relativePath": ".."
+      },
+      "@micro/configs": {
+        "relativePath": "../../configs"
+      },
+      "simple": {
+        "relativePath": "../../simple"
+      },
+      "@micro/webpack-config": {
+        "relativePath": "../../webpack-config"
+      },
+      "@micro/service-template": {
+        "relativePath": "../../../services/_template"
+      },
+      "@micro/dashboard": {
+        "relativePath": "../../../services/dashboard"
+      },
+      "@micro/sign-in": {
+        "relativePath": "../../../services/sign-in"
+      }
+    }
+  },
+  "version": "0.0.1"
+}
