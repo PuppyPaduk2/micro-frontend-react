@@ -2,15 +2,6 @@
   "version": "0.0.1",
   "packages": {
     "linked": {
-      "micro-frontend-react": {
-        "relativePath": ".."
-      },
-      "ts-server-client-template": {
-        "relativePath": "../app"
-      },
-      "spoctopus": {
-        "relativePath": "../libs/spoctopus"
-      },
       "@micro/configs": {
         "relativePath": "../libs/configs"
       },
@@ -19,15 +10,6 @@
       },
       "@micro/webpack-config": {
         "relativePath": "../libs/webpack-config"
-      },
-      "@micro/service-template": {
-        "relativePath": "../services/_template"
-      },
-      "@micro/dashboard": {
-        "relativePath": "../services/dashboard"
-      },
-      "@micro/sign-in": {
-        "relativePath": "../services/sign-in"
       }
     }
   }

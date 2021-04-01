@@ -12,7 +12,7 @@ program.option("-c, --config <path>", "Path to config");
 
 program
   .command("link [packageName]")
-  .option("-d, --dir <dir>", "Dir for symlink")
+  .option("-t, --target-dir <dir>", "Target directory for attach")
   .option("--auto", "Auto link packages")
   .action(actionWrapper(program, require("./actions/link").link));
 
@@ -21,16 +21,14 @@ program
   .action(actionWrapper(program, require("./actions/unlink").unlink));
 
 program
-  .command("attach")
+  .command("attach [packageName]")
+  .option("--auto", "Auto attach packages")
   .action(actionWrapper(program, require("./actions/attach").attach));
 
 program
-  .command("detach")
+  .command("detach [packageName]")
+  .option("--auto", "Auto detach packages")
   .action(actionWrapper(program, require("./actions/detach").detach));
-
-program
-  .command("setup")
-  .action(actionWrapper(program, require("./actions/setup").setup));
 
 program
   .command("clean")

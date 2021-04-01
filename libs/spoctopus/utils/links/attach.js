@@ -1,31 +1,57 @@
 const path = require("path");
 const fs = require("fs");
 
-const { read: readConfig } = require("../package-config/read");
+const readConfig = require("../package-config/read").read;
 const readState = require("../storage/state").read;
-const getLinked = require("../storage/state").linked;
-const { config: getConfig } = require("../action/config");
+const getStateLinked = require("../storage/state").linked;
+const getConfig = require("../action/config").config;
+const getArgs = require("../action/args").args;
+const { getFullName } = require("../package-name/full-name");
 const { getTargetDir } = require("./target-dir");
+const { glob } = require("../glob-promise");
+const { SEARCH } = require("../../constants");
 
 const getPackageDir = (dir) => path.resolve(process.cwd(), dir);
 
-const attach = (payload = {}) => {
-  const packageDir = getPackageDir(payload.packageDir || process.cwd());
-  const { getLinks } = readConfig({ packageDir });
+const attach = (packageDir) => {
+  const targetPackageName = getArgs()[0];
 
-  readState();
-
-  Object.entries(getLinks()).forEach(([packageName, packageParams]) => {
-    const linkedPackage = getLinked()[packageName];
-    const params = { packageDir, packageName, linkedPackage, packageParams };
-
-    if (linkedPackage) attachPackage(params);
-  });
+  if (targetPackageName) attachTargetPackage(packageDir);
+  else attachAllPackages(packageDir);
 };
 
-const attachPackage = (payload = {}) => {
-  const linkedPackageDir = getLinkedPackageDir(payload);
-  const targetDir = getTargetDir(payload);
+const attachTargetPackage = (packageDir) => {
+  packageDir = getPackageDir(packageDir || process.cwd());
+  const targetPackageName = getFullName(getArgs()[0]);
+  const links = Object.entries(readConfig({ packageDir }).getLinks());
+  const filter = ([packageName]) => packageName === targetPackageName;
+  const link = links.filter(filter)[0];
+
+  if (link) attachEachPackage(packageDir)(link);
+};
+
+const attachAllPackages = (packageDir) => {
+  packageDir = getPackageDir(packageDir || process.cwd());
+  const links = Object.entries(readConfig({ packageDir }).getLinks());
+
+  links.forEach(attachEachPackage(packageDir));
+};
+
+const attachEachPackage = (packageDir) => ([packageName, { targetDir }]) => {
+  readState();
+
+  packageDir = getPackageDir(packageDir || process.cwd());
+  const linkedPackage = getStateLinked()[packageName];
+  const options = { packageDir, packageName, targetDir, linkedPackage };
+
+  if (linkedPackage) attachPackage(options);
+};
+
+const attachPackage = (payload) => {
+  const { packageDir, packageName, linkedPackage } = payload;
+  let { targetDir } = payload;
+  const linkedPackageDir = getLinkedPackageDir(linkedPackage.relativePath);
+  targetDir = getTargetDir({ packageName, packageDir, targetDir });
 
   if (fs.existsSync(targetDir)) fs.rmSync(targetDir, { recursive: true });
 
@@ -33,10 +59,23 @@ const attachPackage = (payload = {}) => {
   fs.symlinkSync(linkedPackageDir, targetDir);
 };
 
-const getLinkedPackageDir = (payload = {}) => {
+const getLinkedPackageDir = (relativePath) => {
   const { storageDir } = getConfig();
-  const linkedPackage = payload.linkedPackage;
-  return path.resolve(storageDir, linkedPackage.relativePath);
+  return path.resolve(storageDir, relativePath);
 };
 
-module.exports = { attach };
+const autoAttach = () => {
+  const eachPath = (value) => attach(path.parse(value).dir);
+
+  glob(SEARCH.PATTERN, {
+    cwd: process.cwd(),
+    ignore: SEARCH.IGNORE,
+  }).then((paths) => onlyArray(paths).forEach(eachPath));
+};
+
+const onlyArray = (value) => {
+  if (value instanceof Array) return value;
+  else [];
+};
+
+module.exports = { attach, autoAttach };

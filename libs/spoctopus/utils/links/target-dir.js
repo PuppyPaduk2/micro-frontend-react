@@ -4,13 +4,12 @@ const { getScope, getName } = require("../package-name/scope");
 
 const getPackageDir = (dir) => path.resolve(process.cwd(), dir);
 
-const getTargetDir = (payload = {}) => {
-  const scope = getScope(payload.packageName);
-  const name = getName(payload.packageName);
-  const targetTail = [scope, name].filter(Boolean);
-  const { targetDir } = payload.packageParams;
-  const packageDir = getPackageDir(payload.packageDir || process.cwd());
-  return path.resolve(packageDir, targetDir, ...targetTail);
+const getTargetDir = ({ packageName, packageDir, targetDir }) => {
+  const scope = getScope(packageName);
+  const name = getName(packageName);
+  const tail = [scope, name].filter(Boolean);
+  packageDir = getPackageDir(packageDir || process.cwd());
+  return path.resolve(packageDir, targetDir, ...tail);
 };
 
 module.exports = { getTargetDir };

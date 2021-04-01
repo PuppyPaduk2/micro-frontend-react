@@ -1,7 +1,10 @@
-const attachLink = require("../utils/links/attach").attach;
+const attachLinks = require("../utils/links/attach").attach;
+const autoAttachLinks = require("../utils/links/attach").autoAttach;
+const getArgs = require("../utils/action/args").args;
 
 const attach = () => {
-  attachLink();
+  if (getArgs()[1].auto) autoAttachLinks();
+  else attachLinks();
 };
 
 module.exports = { attach };
