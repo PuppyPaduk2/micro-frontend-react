@@ -1,5 +1,6 @@
 const path = require("path");
 
+// TODO It is dirty
 const {
   read,
   published: getPublished,

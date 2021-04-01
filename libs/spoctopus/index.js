@@ -17,6 +17,7 @@ program
 program
   .command("link [packageName]")
   .option("-t, --target-dir <dir>", "Target directory for attach")
+  .option("-i, --interactive", "Interactive mode for pick package")
   .option("--auto", "Auto link packages")
   .action(actionWrapper(program, require("./actions/link").link));
 

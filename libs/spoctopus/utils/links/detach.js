@@ -16,6 +16,7 @@ const detach = (packageDir) => {
   else detachAllPackages(packageDir);
 };
 
+// TODO more cleaner
 const detachTargetPackage = (packageDir) => {
   packageDir = getPackageDir(packageDir || process.cwd());
   const targetPackageName = getArgs()[0];

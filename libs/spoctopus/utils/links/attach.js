@@ -20,6 +20,7 @@ const attach = (packageDir) => {
   else attachAllPackages(packageDir);
 };
 
+// TODO more cleaner
 const attachTargetPackage = (packageDir) => {
   packageDir = getPackageDir(packageDir || process.cwd());
   const targetPackageName = getFullName(getArgs()[0]);

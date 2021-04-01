@@ -8,14 +8,16 @@ const { read: readState, linked: getLinked } = require("../storage/state");
 
 const getPackageDir = (dir) => path.resolve(process.cwd(), dir);
 
+// TODO only packageDir (replace payload)
 const link = (payload = {}) => {
-  const { packageDir, targetDir } = payload;
+  const { packageDir } = payload;
   const packageName = getFullName(getArgs()[0]);
 
   readState();
-  if (getLinked()[packageName]) addLink({ packageDir, targetDir });
+  if (getLinked()[packageName]) addLink({ packageDir });
 };
 
+// TODO more cleaner
 const addLink = (payload = {}) => {
   const packageDir = getPackageDir(payload.packageDir || process.cwd());
   const targetDir = getArgs()[1].targetDir || PATHS.NODE_MODULES;
