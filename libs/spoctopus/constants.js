@@ -20,9 +20,12 @@ const SEARCH = {
   IGNORE: ["package.json", "**/node_modules/**"],
 };
 
+const SALT = 10;
+
 module.exports = {
   PACKAGE,
   PATHS,
   FULL_PATHS,
   SEARCH,
+  SALT,
 };

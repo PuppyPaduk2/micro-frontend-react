@@ -11,6 +11,10 @@ program.version(PACKAGE.version);
 program.option("-c, --config <path>", "Path to config");
 
 program
+  .command("init")
+  .action(actionWrapper(program, require("./actions/init").init));
+
+program
   .command("link [packageName]")
   .option("-t, --target-dir <dir>", "Target directory for attach")
   .option("--auto", "Auto link packages")
