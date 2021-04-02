@@ -22,10 +22,16 @@ const SEARCH = {
 
 const SALT = 10;
 
+const ARCHIVE = {
+  PATTERN: "**/**",
+  IGNORE: ["**/node_modules/**"],
+};
+
 module.exports = {
   PACKAGE,
   PATHS,
   FULL_PATHS,
   SEARCH,
   SALT,
+  ARCHIVE,
 };

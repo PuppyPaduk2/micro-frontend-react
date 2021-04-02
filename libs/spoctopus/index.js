@@ -54,6 +54,18 @@ program
   .action(actionWrapper(program, require("./actions/detach").detach));
 
 program
+  .command("public")
+  .action(actionWrapper(program, require("./actions/public").public));
+
+program
+  .command("add")
+  .action(actionWrapper(program, require("./actions/add").add));
+
+program
+  .command("remove")
+  .action(actionWrapper(program, require("./actions/remove").remove));
+
+program
   .command("clean")
   .action(actionWrapper(program, require("./actions/clean").clean));
 
