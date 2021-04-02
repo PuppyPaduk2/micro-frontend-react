@@ -54,13 +54,13 @@
     "packages": {
       "links": {
         "@micro/configs": {
-          "targetDir": "./node_modules"
+          "targetDir": "./libs"
         },
         "@micro/webpack-config": {
           "targetDir": "./libs"
         },
         "simple": {
-          "targetDir": "./node_modules"
+          "targetDir": "./libs"
         }
       }
     }

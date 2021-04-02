@@ -10,6 +10,9 @@
       },
       "@micro/webpack-config": {
         "relativePath": "../libs/webpack-config"
+      },
+      "ts-server-client-template": {
+        "relativePath": "../app"
       }
     }
   }
