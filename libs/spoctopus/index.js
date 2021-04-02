@@ -14,6 +14,24 @@ program
   .command("init")
   .action(actionWrapper(program, require("./actions/init").init));
 
+const options = program.command("options");
+
+options
+  .command("set <name> <value>")
+  .action(actionWrapper(program, require("./actions/options/set").set));
+
+options
+  .command("unset <name>")
+  .action(actionWrapper(program, require("./actions/options/unset").unset));
+
+options
+  .command("list")
+  .action(actionWrapper(program, require("./actions/options/list").list));
+
+options
+  .command("clean")
+  .action(actionWrapper(program, require("./actions/options/clean").clean));
+
 program
   .command("link [packageName]")
   .option("-t, --target-dir <dir>", "Target directory for attach")

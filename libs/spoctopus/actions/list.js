@@ -1,6 +1,7 @@
 const path = require("path");
 
-// TODO It is dirty
+const { logTable } = require("../utils/console-log/table");
+
 const {
   read,
   published: getPublished,
@@ -12,25 +13,23 @@ const list = () => {
   read();
 
   console.log("Published:");
-  const published = Object.entries(getPublished());
-  if (!published.length) console.log("List is empty");
-  published.forEach(([packageName]) => console.log("-", packageName));
+  logTable(getTablePayload(Object.entries(getPublished())));
 
   console.log("\nLinked:");
-  const linked = Object.entries(getLinked());
-  if (!linked.length) console.log("List is empty");
-  let ref = { maxLength: 0 };
-  getMaxLength(linked, ref).forEach(([packageName, { relativePath }]) => {
-    const packageDir = path.resolve(getConfig().storageDir, relativePath);
-    console.log("-", packageName.padEnd(ref.maxLength), ">", packageDir);
-  });
+  logTable(getTablePayload(Object.entries(getLinked())));
 };
 
-const getMaxLength = (linked, ref) => {
-  return linked.map((link) => {
-    if (ref.maxLength < link[0].length) ref.maxLength = link[0].length;
-    return link;
-  });
-};
+const getTablePayload = (collection) => ({
+  collection,
+  columns: [
+    () => "-",
+    ([packageName]) => packageName,
+    () => ">",
+    ([, { relativePath }]) => {
+      return path.resolve(getConfig().storageDir, relativePath);
+    },
+  ],
+  messageEmpty: "List is empty",
+});
 
 module.exports = { list };

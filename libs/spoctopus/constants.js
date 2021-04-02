@@ -7,10 +7,12 @@ const PATHS = {
   STATE_FILE: "./state.json",
   PACKAGE_JSON: "./package.json",
   NODE_MODULES: "./node_modules",
+  OPTIONS_FILE: "./options.json",
 };
 
 const FULL_PATHS = {
   STORAGE_DIR: path.resolve(__dirname, PATHS.STORAGE_DIR),
+  OPTIONS_FILE: path.resolve(__dirname, PATHS.OPTIONS_FILE),
 };
 
 const SEARCH = {
