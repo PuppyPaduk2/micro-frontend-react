@@ -1,13 +1,13 @@
 const prompts = require("prompts");
 
-const removeStorage = require("../utils/storage/remove").remove;
+const cleanStorage = require("../utils/storage/clean").clean;
 
 const clean = () => {
   prompts({
     type: "password",
     name: "password",
     message: "Insert password",
-  }).then(({ password }) => password && removeStorage(password));
+  }).then(({ password }) => password && cleanStorage(password));
 };
 
 module.exports = { clean };

@@ -46,6 +46,8 @@ program
 program
   .command("attach [packageName]")
   .option("--auto", "Auto attach packages")
+  .option("-l, --links", "Only links")
+  .option("-d, --deps", "Only dependencies")
   .action(actionWrapper(program, require("./actions/attach").attach));
 
 program
@@ -58,11 +60,12 @@ program
   .action(actionWrapper(program, require("./actions/public").public));
 
 program
-  .command("add")
+  .command("add <packageName>")
+  .option("-t, --target-dir <dir>", "Target directory for attach")
   .action(actionWrapper(program, require("./actions/add").add));
 
 program
-  .command("remove")
+  .command("remove <packageName>")
   .action(actionWrapper(program, require("./actions/remove").remove));
 
 program
@@ -74,3 +77,6 @@ program
   .action(actionWrapper(program, require("./actions/list").list));
 
 program.parse(process.argv);
+
+// TODO save for install
+// console.log(module.paths[module.paths.length - 3]);

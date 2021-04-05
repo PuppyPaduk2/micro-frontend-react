@@ -26,7 +26,7 @@ const getTablePayload = (collection) => ({
     ([packageName]) => packageName,
     () => ">",
     ([, { relativePath }]) => {
-      return path.resolve(getConfig().storageDir, relativePath);
+      return path.resolve(getConfig().storageDir, relativePath || "");
     },
   ],
   messageEmpty: "List is empty",

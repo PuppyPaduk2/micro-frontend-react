@@ -29,6 +29,31 @@
       "@micro/sign-in": {
         "relativePath": "../../../services/sign-in"
       }
+    },
+    "published": {
+      "simple": {
+        "created": 1617616329922,
+        "storageRelativePath": "simple",
+        "lastVersion": "2.0.0",
+        "versions": {
+          "1.0.0": {
+            "created": 1617616329922
+          },
+          "2.0.0": {
+            "created": 1617616336904
+          }
+        }
+      },
+      "@micro/configs": {
+        "created": 1617618457343,
+        "storageRelativePath": "@micro/configs",
+        "lastVersion": "0.0.1",
+        "versions": {
+          "0.0.1": {
+            "created": 1617618457344
+          }
+        }
+      }
     }
   },
   "version": "0.0.1"

@@ -8,6 +8,8 @@ const getConfig = require("../action/config").config;
 const getArgs = require("../action/args").args;
 const { getFullName } = require("../package-name/full-name");
 const { getTargetDir } = require("./target-dir");
+const { glob } = require("../glob-promise");
+const { SEARCH } = require("../../constants");
 
 const getPackageDir = (dir) => path.resolve(process.cwd(), dir);
 
@@ -63,4 +65,18 @@ const getLinkedPackageDir = (relativePath) => {
   return path.resolve(storageDir, relativePath);
 };
 
-module.exports = { attach };
+const autoAttach = () => {
+  const eachPath = (value) => attach(path.parse(value).dir);
+
+  glob(SEARCH.PATTERN, {
+    cwd: process.cwd(),
+    ignore: SEARCH.IGNORE,
+  }).then((paths) => onlyArray(paths).forEach(eachPath));
+};
+
+const onlyArray = (value) => {
+  if (value instanceof Array) return value;
+  else [];
+};
+
+module.exports = { attach, autoAttach };

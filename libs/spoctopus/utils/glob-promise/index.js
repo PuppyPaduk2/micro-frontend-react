@@ -4,7 +4,7 @@ const glob = (pattern, options) => {
   return new Promise((resolve, reject) => {
     _glob(pattern, options, (err, paths) => {
       if (err) reject(err);
-      else resolve(paths);
+      else resolve(paths || []);
     });
   });
 };

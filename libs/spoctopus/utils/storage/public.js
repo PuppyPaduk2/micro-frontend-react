@@ -29,6 +29,7 @@ const addPackage = () => {
   getPublished()[getPackageName()] = {
     created: new Date().getTime(),
     storageRelativePath: path.relative(getStorageDir(), getPackageStorageDir()),
+    lastVersion: null,
     versions: {},
   };
   addPackageVersion();
@@ -37,10 +38,12 @@ const addPackage = () => {
 const addPackageVersion = () => {
   const name = getPackageName();
   const version = getPackageVersion();
+  const pack = getPublished()[name];
 
-  getPublished()[name].versions[version] = {
+  pack.versions[version] = {
     created: new Date().getTime(),
   };
+  pack.lastVersion = version;
   archivePackage();
 };
 
@@ -61,7 +64,7 @@ const archivePackage = () => {
     cwd: process.cwd(),
     ignore: ARCHIVE.IGNORE,
     dot: true,
-  }).then(() => console.log("done"));
+  });
 };
 
 const getArchiveFile = () => {

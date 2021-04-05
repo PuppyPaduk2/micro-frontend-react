@@ -53,14 +53,21 @@
   "spoctopus": {
     "packages": {
       "links": {
-        "@micro/configs": {
-          "targetDir": "./libs"
-        },
         "@micro/webpack-config": {
           "targetDir": "./libs"
         },
-        "simple": {
+        "@micro/configs": {
           "targetDir": "./libs"
+        }
+      },
+      "dependencies": {
+        "simple": {
+          "version": "1.0.0",
+          "targetDir": "./libs"
+        },
+        "@micro/configs": {
+          "version": "0.0.1",
+          "targetDir": "./libs-target"
         }
       }
     }
