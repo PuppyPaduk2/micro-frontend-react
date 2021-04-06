@@ -19,11 +19,12 @@ const options = program.command("options");
 options
   .command("set <name> <value>")
   .action(wrapper(actions.options.set, ([name, value]) => ({ name, value })));
-options
-  .command("unset <name>")
-  .action(wrapper(actions.options.unset, ([name]) => ({ name })));
-options.command("list").action(wrapper(actions.options.list));
-options.command("clean").action(wrapper(actions.options.clean));
+
+options.command("unset <name>");
+
+options.command("list");
+
+options.command("clean");
 
 program.command("clean").action(wrapper(actions.clean));
 

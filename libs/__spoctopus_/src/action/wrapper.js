@@ -13,10 +13,14 @@ const actionWrapper = (program) => (callback, getOptions = () => ({})) => {
     state.args = args;
     state.actionOptions = {
       ...state.options,
-      ...getOptions(...args),
+      ...getOptions(
+        args,
+        state.programOptions ? state.programOptions.actions : {}
+      ),
     };
     state.config = {
       ...state.config,
+      ...state.programOptions.config,
       ...getConfig(state.programOptions.configFile),
     };
     state.extConfig = {

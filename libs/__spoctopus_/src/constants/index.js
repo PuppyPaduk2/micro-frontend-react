@@ -10,6 +10,11 @@ const PATHS = {
   OPTIONS_FILE: "../../options.json",
 };
 
+const FULL_PATHS = {
+  STORAGE_DIR: path.resolve(__dirname, PATHS.STORAGE_DIR),
+  OPTIONS_FILE: path.resolve(__dirname, PATHS.OPTIONS_FILE),
+};
+
 const SEARCH = {
   PATTERN: "**/package.json",
   IGNORE: ["package.json", "**/node_modules/**"],
@@ -25,6 +30,7 @@ const ARCHIVE = {
 module.exports = {
   PACKAGE,
   PATHS,
+  FULL_PATHS,
   SEARCH,
   SALT,
   ARCHIVE,

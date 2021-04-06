@@ -1,3 +1,3 @@
 module.exports = {
-  storageDir: "./storage-spoc",
+  storageDir: "./_STORAGE-SPOC",
 };

@@ -10,9 +10,4 @@ const error = (...args) => {
   console.log(...args);
 };
 
-module.exports = {
-  info,
-  warn,
-  error,
-  table: require("./table").table,
-};
+module.exports = { info, warn, error };

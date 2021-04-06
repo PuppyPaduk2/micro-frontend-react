@@ -1,52 +1,43 @@
-const bcrypt = require("bcrypt");
 const fs = require("fs");
+const { hashSync } = require("bcrypt");
 
-const { getActionState } = require("../../action");
-const { write } = require("../../utils/fs-json");
-const { SALT } = require("../../constants");
+const { getRef, writeStorageState } = require("../../action");
+const prompts = require("../../utils/prompts");
 const { warn } = require("../../utils/console");
-const { password } = require("../../utils/prompts");
-
-const answers = { password: null };
+const { SALT } = require("../../constants");
 
 const init = () => {
-  const { storageStateFile } = getActionState().extConfig;
+  const { storageStateFile } = getRef().extConfig;
 
   if (fs.existsSync(storageStateFile)) warn("Storage exist already");
-  else createQuestions();
+  else runQuestions();
 };
 
-const createQuestions = async () => {
-  answers.password = (await password()).password;
-  createStorage();
+const runQuestions = async () => {
+  const { password } = await prompts.password();
+
+  if (password) createStorage(password);
+  else return;
 };
 
-const createStorage = () => {
-  if (!answers.password) return;
-
+const createStorage = (password) => {
+  getRef().storageState.hashPassword = hashSync(password, SALT);
   createStorageDir();
   createStorageStateFile();
 };
 
 const createStorageDir = () => {
-  const { storageDir } = getActionState().config;
+  const { storageDir } = getRef().config;
 
   if (!fs.existsSync(storageDir)) fs.mkdirSync(storageDir, { recursive: true });
   else warn("Storage directory exist already");
 };
 
 const createStorageStateFile = () => {
-  const { storageStateFile } = getActionState().extConfig;
+  const { storageStateFile } = getRef().extConfig;
 
-  if (!fs.existsSync(storageStateFile)) writeStoreState();
+  if (!fs.existsSync(storageStateFile)) writeStorageState();
   else warn("Storage state file exist already");
-};
-
-const writeStoreState = () => {
-  const { storageStateFile } = getActionState().extConfig;
-  const hashPassword = bcrypt.hashSync(answers.password, SALT);
-
-  write(storageStateFile, { hashPassword });
 };
 
 module.exports = { init };

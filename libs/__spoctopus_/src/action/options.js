@@ -1,6 +1,7 @@
 const fs = require("fs");
 
 const { FULL_PATHS } = require("../constants");
+const { read, write } = require("../utils/fs-json");
 
 const { OPTIONS_FILE } = FULL_PATHS;
 
@@ -9,7 +10,7 @@ const readOptions = () => {
   else return {};
 };
 
-const writeOptions = () => {
+const writeOptions = (options = {}) => {
   write(OPTIONS_FILE, options);
 };
 

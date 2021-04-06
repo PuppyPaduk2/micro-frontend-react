@@ -1,0 +1,4 @@
+{
+  "configFile": "./spoc.js",
+  "actions.link.targetDir": "./libs"
+}
