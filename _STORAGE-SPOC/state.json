@@ -1,5 +1,67 @@
 {
   "hashPassword": "$2b$10$9cgQ4HK/MnWMaYSr94c2ZOm4oTsfzo5h7xY4y8Md6wTRNKIz.DpI.",
-  "packages": {},
+  "packages": {
+    "ts-server-client-template": {
+      "created": 1617707546084,
+      "packageRelativePath": "../app",
+      "storageRelativePath": "ts-server-client-template",
+      "lastVersion": "",
+      "versions": {}
+    },
+    "@micro/configs": {
+      "created": 1617707546085,
+      "packageRelativePath": "../libs/configs",
+      "storageRelativePath": "@micro/configs",
+      "lastVersion": "",
+      "versions": {}
+    },
+    "simple": {
+      "created": 1617707546085,
+      "packageRelativePath": "../libs/simple",
+      "storageRelativePath": "simple",
+      "lastVersion": "",
+      "versions": {}
+    },
+    "spoctopus": {
+      "created": 1617707546086,
+      "packageRelativePath": "../libs/spoctopus",
+      "storageRelativePath": "spoctopus",
+      "lastVersion": "",
+      "versions": {}
+    },
+    "@micro/webpack-config": {
+      "created": 1617707546086,
+      "packageRelativePath": "../libs/webpack-config",
+      "storageRelativePath": "@micro/webpack-config",
+      "lastVersion": "",
+      "versions": {}
+    },
+    "@micro/service-template": {
+      "created": 1617707546086,
+      "packageRelativePath": "../services/_template",
+      "storageRelativePath": "@micro/service-template",
+      "lastVersion": "",
+      "versions": {}
+    },
+    "@micro/dashboard": {
+      "created": 1617707546086,
+      "packageRelativePath": "../services/dashboard",
+      "storageRelativePath": "@micro/dashboard",
+      "lastVersion": "",
+      "versions": {}
+    },
+    "@micro/sign-in": {
+      "created": 1617707546087,
+      "packageRelativePath": "../services/sign-in",
+      "storageRelativePath": "@micro/sign-in",
+      "lastVersion": "",
+      "versions": {}
+    },
+    "ts-server-client-template-2": {
+      "created": 1617710855152,
+      "packageRelativePath": "../app",
+      "storageRelativePath": "ts-server-client-template-2"
+    }
+  },
   "version": "0.0.1"
 }

@@ -10,14 +10,14 @@ const PATHS = {
   OPTIONS_FILE: "../../options.json",
 };
 
-const SEARCH = {
+const SEARCH_PACKAGES = {
   PATTERN: "**/package.json",
   IGNORE: ["package.json", "**/node_modules/**"],
 };
 
 const SALT = 10;
 
-const ARCHIVE = {
+const ARCHIVE_PACKAGE = {
   PATTERN: "**/**",
   IGNORE: ["**/node_modules/**"],
 };
@@ -25,7 +25,7 @@ const ARCHIVE = {
 module.exports = {
   PACKAGE,
   PATHS,
-  SEARCH,
+  SEARCH_PACKAGES,
   SALT,
-  ARCHIVE,
+  ARCHIVE_PACKAGE,
 };

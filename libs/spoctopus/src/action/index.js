@@ -1,8 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 
-const { PATHS, PACKAGE } = require("../constants");
+const { PATHS, PACKAGE, SEARCH_PACKAGES } = require("../constants");
 const { read, write } = require("../utils/fs-json");
+const { glob } = require("../utils/glob-promise");
 
 const ref = {
   globalOptions: {},
@@ -64,10 +65,11 @@ const updateActionsOptions = (args = [], getOptions = () => ({})) => {
 
 const updateConfig = () => {
   const config = readConfig();
+  const configDir = path.parse(getConfigFile()).dir;
 
   ref.config = {
     ...config,
-    storageDir: path.resolve(process.cwd(), config.storageDir),
+    storageDir: path.resolve(configDir, config.storageDir),
   };
 };
 
@@ -116,9 +118,55 @@ const writeStorageState = () => {
   write(ref.extConfig.storageStateFile, ref.storageState);
 };
 
+const searchPackages = () => {
+  return glob(SEARCH_PACKAGES.PATTERN, {
+    cwd: process.cwd(),
+    ignore: [...SEARCH_PACKAGES.IGNORE, ...getSearchPackagesIgnore()],
+  });
+};
+
+const getSearchPackagesIgnore = () => {
+  const { searchPackages } = ref.config;
+
+  if (searchPackages && searchPackages.ignore) return searchPackages.ignore;
+  else [];
+};
+
+const packageConfigs = {};
+
+const readPackageJson = (file = PATHS.PACKAGE_JSON) => {
+  const packageJsonFile = path.resolve(process.cwd(), file);
+
+  return read(packageJsonFile);
+};
+
+const readPackageConfig = (file = PATHS.PACKAGE_JSON) => {
+  const packageJsonFile = path.resolve(process.cwd(), file);
+  const packageJson = readPackageJson(packageJsonFile);
+  const config = packageJson[PACKAGE.name] || { packages: {} };
+
+  packageJson[PACKAGE.name] = config;
+  packageConfigs[packageJsonFile] = packageJson;
+
+  return config;
+};
+
+const writePackageConfig = (file = PATHS.PACKAGE_JSON) => {
+  const packageJsonFile = path.resolve(process.cwd(), file);
+  const packageJson = packageConfigs[packageJsonFile];
+
+  console.log(packageJson);
+
+  if (packageJson) write(packageJsonFile, packageJson);
+};
+
 module.exports = {
   getRef,
   actionWrapper,
   writeGlobalOptions,
   writeStorageState,
+  searchPackages,
+  readPackageJson,
+  readPackageConfig,
+  writePackageConfig,
 };

@@ -1,5 +1,5 @@
 {
-  "name": "ts-server-client-template",
+  "name": "ts-server-client-template-3",
   "version": "0.0.1",
   "main": "index.js",
   "license": "MIT",
@@ -52,24 +52,7 @@
   },
   "spoctopus": {
     "packages": {
-      "links": {
-        "@micro/webpack-config": {
-          "targetDir": "./libs"
-        },
-        "@micro/configs": {
-          "targetDir": "./libs"
-        }
-      },
-      "dependencies": {
-        "simple": {
-          "version": "1.0.0",
-          "targetDir": "./libs"
-        },
-        "@micro/configs": {
-          "version": "0.0.1",
-          "targetDir": "./libs-target"
-        }
-      }
+      "@micro/configs": "./libs"
     }
   }
 }

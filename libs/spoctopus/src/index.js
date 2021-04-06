@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { Command } = require("commander");
 
-const { PACKAGE } = require("./constants");
+const { PACKAGE, PATHS } = require("./constants");
 const { actionWrapper } = require("./action");
 const actions = require("./actions");
 
@@ -26,5 +26,22 @@ options.command("list").action(wrapper(actions.options.list));
 options.command("clean").action(wrapper(actions.options.clean));
 
 program.command("clean").action(wrapper(actions.clean));
+
+program
+  .command("link [packageName]")
+  .option("-t, --target-dir <dir>", "Target directory for attach")
+  .option("-i, --interactive", "Interactive mode for pick package")
+  .option("-s, --search", "Auto link packages by searching")
+  .action(
+    wrapper(actions.link, ([packageName, options], globalOptions) => ({
+      packageName: packageName || null,
+      targetDir:
+        options.targetDir ||
+        globalOptions["actions.link.targetDir"] ||
+        PATHS.NODE_MODULES,
+      interactive: Boolean(options.interactive),
+      search: Boolean(options.search),
+    }))
+  );
 
 program.parse(process.argv);
