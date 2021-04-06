@@ -2,7 +2,7 @@ const { compareSync } = require("bcrypt");
 const fs = require("fs");
 
 const prompts = require("../../utils/prompts");
-const { getRef } = require("../../action");
+const { getRef } = require("../../action/wrapper");
 const { warn, error } = require("../../utils/console");
 
 const clean = () => {

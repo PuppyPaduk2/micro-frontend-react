@@ -1,6 +1,6 @@
 const path = require("path");
 
-const { getRef, writeGlobalOptions } = require("../../action");
+const { getRef, writeGlobalOptions } = require("../../action/wrapper");
 const { table } = require("../../utils/console");
 
 const set = () => {

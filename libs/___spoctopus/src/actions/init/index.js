@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { hashSync } = require("bcrypt");
 
-const { getRef, writeStorageState } = require("../../action");
+const { getRef, writeStorageState } = require("../../action/wrapper");
 const prompts = require("../../utils/prompts");
 const { warn } = require("../../utils/console");
 const { SALT } = require("../../constants");
