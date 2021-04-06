@@ -50,17 +50,5 @@
     "react-spinners": "^0.10.6",
     "styled-components": "^5.2.1",
     "uuid": "^8.3.2"
-  },
-  "spoctopus": {
-    "packages": {
-      "links": {
-        "@micro/configs": {
-          "targetDir": "./target"
-        },
-        "@micro/webpack-config": {
-          "targetDir": "./libs"
-        }
-      }
-    }
   }
 }
