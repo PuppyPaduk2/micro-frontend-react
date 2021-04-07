@@ -1,0 +1,32 @@
+{
+  "version": "0.0.1",
+  "packages": {
+    "ts-server-client-template-3": {
+      "relativePath": "../app/package.json"
+    },
+    "@micro/configs": {
+      "relativePath": "../libs/configs/package.json"
+    },
+    "simple": {
+      "relativePath": "../libs/simple/package.json"
+    },
+    "spoctopus": {
+      "relativePath": "../libs/spoctopus/package.json"
+    },
+    "@micro/webpack-config": {
+      "relativePath": "../libs/webpack-config/package.json"
+    },
+    "@micro/service-template": {
+      "relativePath": "../services/_template/package.json"
+    },
+    "@micro/dashboard": {
+      "relativePath": "../services/dashboard/package.json"
+    },
+    "@micro/sign-in": {
+      "relativePath": "../services/sign-in/package.json"
+    },
+    "micro-frontend-react": {
+      "relativePath": "../package.json"
+    }
+  }
+}
