@@ -8,6 +8,7 @@ const wp = (callback = (value) => value) => {
 
 const webpackConfig = (config = {}) => {
   return {
+    context: wp(config.context)(process.cwd()),
     entry: wp(config.entry)(["core-js/stable", "./src/index"]),
     mode: wp(config.mode)("development"),
     target: wp(config.target)(["web", "es5"]),
@@ -16,30 +17,27 @@ const webpackConfig = (config = {}) => {
         {
           test: /\.(ts|tsx|js|jsx)?$/,
           use: {
-            loader: path.resolve(__dirname, "../node_modules/babel-loader"),
-            options: require("./babel.config")(),
+            loader: require.resolve("babel-loader"),
+            options: {
+              configFile: path.resolve(__dirname, "./babel.config.js"),
+            },
           },
           exclude: /node_modules/,
         },
         {
           test: /\.css$/i,
-          use: [
-            MiniCssExtractPlugin.loader,
-            path.resolve(__dirname, "../node_modules/css-loader"),
-          ],
+          use: [MiniCssExtractPlugin.loader, require.resolve("css-loader")],
         },
         {
           test: /\.svg$/,
           use: [
-            path.resolve(__dirname, "../node_modules/@svgr/webpack"),
-            path.resolve(__dirname, "../node_modules/url-loader"),
+            require.resolve("@svgr/webpack"),
+            require.resolve("url-loader"),
           ],
         },
         {
           test: /\.(png|jpe?g|gif)$/i,
-          use: [
-            { loader: path.resolve(__dirname, "../node_modules/url-loader") },
-          ],
+          use: [{ loader: require.resolve("url-loader") }],
         },
       ],
     }),
@@ -50,7 +48,7 @@ const webpackConfig = (config = {}) => {
         path.resolve(process.cwd(), "./node_modules"),
       ],
     }),
-    externals: wp(config.externals)({}),
+    externals: wp(config.externals)([]),
     output: wp(config.output)({
       filename: "index.js",
       path: path.resolve(process.cwd(), "dist"),

@@ -1,30 +1,24 @@
-module.exports = function () {
-  // api.cache(false);
+module.exports = function (api) {
+  api.cache(false);
   const presets = [
-    [require("@babel/preset-typescript")],
-    [require("@babel/preset-react")],
+    [require.resolve("@babel/preset-typescript")],
+    [require.resolve("@babel/preset-react")],
     [
-      require("@babel/preset-env"),
-      {
-        corejs: { version: 3 },
-        useBuiltIns: "usage",
-        targets: {
-          ie: "11",
-        },
-      },
+      require.resolve("@babel/preset-env"),
+      { corejs: { version: 3 }, useBuiltIns: "usage", targets: { ie: "11" } },
     ],
   ];
   const plugins = [
     [
-      require("@babel/plugin-proposal-decorators"),
+      require.resolve("@babel/plugin-proposal-decorators"),
       { decoratorsBeforeExport: true },
     ],
-    [require("@babel/plugin-proposal-class-properties")],
-    [require("@babel/plugin-transform-modules-commonjs")],
-    [require("@babel/plugin-transform-arrow-functions")],
-    [require("@babel/plugin-transform-object-assign")],
+    [require.resolve("@babel/plugin-proposal-class-properties")],
+    [require.resolve("@babel/plugin-transform-modules-commonjs")],
+    [require.resolve("@babel/plugin-transform-arrow-functions")],
+    [require.resolve("@babel/plugin-transform-object-assign")],
     [
-      require("@babel/plugin-transform-runtime"),
+      require.resolve("@babel/plugin-transform-runtime"),
       { useESModules: false, regenerator: true },
     ],
   ];
