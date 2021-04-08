@@ -1,5 +1,5 @@
 {
   "search": {
-    "ignore": ["package.json", "libs/_*/*.json", "templates/**/*.json"]
+    "ignore": ["package.json", "libs/_*/*.json", "templates/**/*.json", "services/**/*.json"]
   }
 }

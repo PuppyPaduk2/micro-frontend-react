@@ -6,6 +6,9 @@
     },
     "webpack-config": {
       "relativePath": "../libs/webpack-config/package.json"
+    },
+    "utils": {
+      "relativePath": "../libs/utils/package.json"
     }
   }
 }
