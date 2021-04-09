@@ -1,0 +1,10 @@
+{
+  "core": {
+    "port": 3000,
+    "publicPath": "/core"
+  },
+  "signIn": {
+    "port": 3010,
+    "publicPath": "/sign-in"
+  }
+}

@@ -1,6 +1,7 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const axios = require("axios");
 
 const wp = (callback = (value) => value) => {
   return callback;
@@ -74,4 +75,58 @@ const webpackConfig = (config = {}) => {
   };
 };
 
-module.exports = { webpackConfig };
+const getConfig = (baseUrl, serviceKey) =>
+  axios
+    .get(`${baseUrl}/api/services/config/${serviceKey}`)
+    .then(({ data }) => data)
+    .catch(() => {});
+
+const runService = (baseUrl, serviceKey) =>
+  axios.post(`${baseUrl}/api/services/run`, { serviceKey }).catch(() => {});
+
+const stoppedService = (baseUrl, serviceKey) => {
+  let request = null;
+
+  return () => {
+    if (!request) {
+      request = axios
+        .post(`${baseUrl}/api/services/stopped`, { serviceKey })
+        .finally(() => process.exit(0));
+    }
+
+    return request;
+  };
+};
+
+const serviceWebpackConfig = async (config = {}) => {
+  const baseUrl = `http://localhost:2999`;
+  const serviceKey = wp(config.serviceKey)(null);
+  const serviceConfig = await wp(config.serviceConfig)(getConfig)(
+    baseUrl,
+    serviceKey
+  );
+
+  if (!serviceConfig) process.exit(1);
+
+  const { port } = serviceConfig;
+
+  return webpackConfig({
+    output: (output) =>
+      wp(config.output)({
+        ...output,
+        publicPath: `http://localhost:${port}/`,
+      }),
+    devServer: (devServer) =>
+      wp(config.devServer)({
+        ...devServer,
+        port,
+        after: () => {
+          runService(baseUrl, serviceKey);
+          process.on("SIGHUP", stoppedService(baseUrl, serviceKey));
+          process.on("SIGINT", stoppedService(baseUrl, serviceKey));
+        },
+      }),
+  });
+};
+
+module.exports = { webpackConfig, serviceWebpackConfig };
