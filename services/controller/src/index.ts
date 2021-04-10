@@ -1,15 +1,32 @@
 import express from "express";
 import * as http from "http";
-import servicesConfig from "./services-config.json"
+import servicesConfig from "./services-config.json";
+import axios from "axios";
+import { Server } from 'socket.io';
 
+type ServiceConfig = typeof servicesConfig;
+
+type ServiceState = {
+  status: "stopped" | "run";
+};
+
+const servicesState: { [Key in keyof ServiceConfig]?: ServiceState } = {};
 const port = process.env.PORT || 2999;
 const app = express();
 
-type ServiceState = {};
+const server = http.createServer(app);
+const io = new Server(server, { path: "/socket" });
 
-const servicesState: { [Key in keyof typeof servicesConfig]?: ServiceState } = {};
+io.on('connection', () => {
+  console.log('a user connected');
+});
 
 app.use(express.json());
+
+app.get("/api/services/config", (req, res) => {
+  res.send(require("./services-config.json"));
+  res.end();
+});
 
 app.get("/api/services/config/:serviceKey", (req, res) => {
   const { params } = req;
@@ -31,13 +48,32 @@ app.get("/api/services/state", (req, res) => {
 
 app.post("/api/services/run", (req, res) => {
   console.log("run", req.body);
-  res.status(200);
+
+  const { serviceKey } = req.body;
+
+  if (serviceKey) {
+    servicesState[serviceKey] = { status: "run" };
+    io.emit("hello", { test: 1 }, { test: 2 });
+    res.status(200);
+  } else {
+    res.status(400);
+  }
+
   res.end();
 });
 
 app.post("/api/services/stopped", (req, res) => {
   console.log("stopped", req.body);
-  res.status(200);
+
+  const { serviceKey } = req.body;
+
+  if (serviceKey) {
+    servicesState[serviceKey] = { status: "stopped" };
+    res.status(200);
+  } else {
+    res.status(400);
+  }
+
   res.end();
 });
 
@@ -46,5 +82,16 @@ app.get("*", (req, res) => {
   res.end();
 });
 
-http.createServer(app)
-  .listen(port, () => console.log(`http://localhost:${port}`));
+server.listen(port, () => {
+  console.log(`http://localhost:${port}`);
+
+  const serviceConfig: Record<keyof ServiceConfig, ServiceConfig[keyof ServiceConfig]> = require("./services-config.json");
+
+  Object.entries(serviceConfig).forEach(([serviceKey, config]) => {
+    axios.get(`http://localhost:${config.port}`).then(() => {
+      servicesState[serviceKey] = { status: "run" };
+    }).catch(() => {
+      servicesState[serviceKey] = { status: "stopped" };
+    });
+  });
+});

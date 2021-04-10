@@ -3,8 +3,12 @@
     "port": 3000,
     "publicPath": "/core"
   },
-  "signIn": {
+  "sign-in": {
     "port": 3010,
     "publicPath": "/sign-in"
+  },
+  "admin-dashboard": {
+    "port": 3020,
+    "publicPath": "/admin-dashboard"
   }
 }

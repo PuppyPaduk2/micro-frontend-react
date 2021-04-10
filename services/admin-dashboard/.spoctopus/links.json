@@ -1,0 +1,4 @@
+{
+  "webpack-config": "./l-libs",
+  "utils": "./l-libs"
+}

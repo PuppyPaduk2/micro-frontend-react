@@ -71,6 +71,7 @@ const webpackConfig = (config = {}) => {
       historyApiFallback: {
         disableDotRule: true,
       },
+      proxy: wp(config.devServerProxy)({}),
     }),
   };
 };
@@ -111,6 +112,7 @@ const serviceWebpackConfig = async (config = {}) => {
   const { port } = serviceConfig;
 
   return webpackConfig({
+    ...config,
     output: (output) =>
       wp(config.output)({
         ...output,
