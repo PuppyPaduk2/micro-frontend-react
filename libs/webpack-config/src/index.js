@@ -8,7 +8,7 @@ const wp = (callback = (value) => value) => {
 };
 
 const webpackConfig = (config = {}) => {
-  return {
+  const result = {
     context: wp(config.context)(process.cwd()),
     entry: wp(config.entry)(["core-js/stable", "./src/index"]),
     mode: wp(config.mode)("development"),
@@ -71,9 +71,15 @@ const webpackConfig = (config = {}) => {
       historyApiFallback: {
         disableDotRule: true,
       },
-      proxy: wp(config.devServerProxy)({}),
+      proxy: wp(config.devServerProxy)([]),
     }),
   };
+
+  if (!result.devServer.proxy.length) {
+    delete result.devServer.proxy;
+  }
+
+  return result;
 };
 
 const getConfig = (baseUrl, serviceKey) =>

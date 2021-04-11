@@ -17,8 +17,12 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { path: "/socket" });
 
-io.on('connection', () => {
+io.on('connection', (socket) => {
   console.log('a user connected');
+
+  socket.on("disconnect", (reason) => {
+    console.log('a user disconnected');
+  });
 });
 
 app.use(express.json());
@@ -53,7 +57,7 @@ app.post("/api/services/run", (req, res) => {
 
   if (serviceKey) {
     servicesState[serviceKey] = { status: "run" };
-    io.emit("hello", { test: 1 }, { test: 2 });
+    io.emit("services/run", { serviceKey });
     res.status(200);
   } else {
     res.status(400);
@@ -69,6 +73,7 @@ app.post("/api/services/stopped", (req, res) => {
 
   if (serviceKey) {
     servicesState[serviceKey] = { status: "stopped" };
+    io.emit("services/stopped", { serviceKey });
     res.status(200);
   } else {
     res.status(400);

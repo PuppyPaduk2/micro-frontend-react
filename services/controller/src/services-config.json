@@ -1,4 +1,8 @@
 {
+  "controller": {
+    "port": 2999,
+    "publicPath": null
+  },
   "core": {
     "port": 3000,
     "publicPath": "/core"

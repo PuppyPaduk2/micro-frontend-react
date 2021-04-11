@@ -2,7 +2,8 @@ const { serviceWebpackConfig } = require("./l-libs/webpack-config");
 
 module.exports = serviceWebpackConfig({
   serviceKey: () => "admin-dashboard",
-  devServerProxy: () => [
+  devServerProxy: (proxy) => [
+    ...proxy,
     {
       context: ["/api"],
       changeOrigin: true,

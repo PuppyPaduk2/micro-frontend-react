@@ -4,13 +4,6 @@ import axios from "axios";
 import io from 'socket.io-client';
 
 const socket = io("/", { path: "/socket", autoConnect: false });
-socket.on("connect", () => {
-  console.log(socket.id);
-});
-socket.on("hello", (...args) => {
-  console.log("hello", args)
-})
-socket.connect();
 
 export const App: React.FC = () => {
   const [servicesConfig, serServicesConfig] = useState<{ [key: string]: { port: number; publicPath: string } }>({});
@@ -20,6 +13,21 @@ export const App: React.FC = () => {
     axios.get("/api/services/config").then(({ data }) => serServicesConfig(data));
     axios.get("/api/services/state").then(({ data }) => serServicesState(data));
   }, []);
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log(socket.id);
+    });
+    socket.on("services/run", ({ serviceKey }) => serServicesState(prev => ({
+      ...prev,
+      [serviceKey]: { ...prev[serviceKey], status: "run" }
+    })));
+    socket.on("services/stopped", ({ serviceKey }) => serServicesState(prev => ({
+      ...prev,
+      [serviceKey]: { ...prev[serviceKey], status: "stopped" }
+    })));
+    socket.connect();
+  }, [])
 
   return (
     <div>
