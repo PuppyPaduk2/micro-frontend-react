@@ -8,6 +8,8 @@ type ServiceConfig = typeof servicesConfig;
 
 type ServiceState = {
   status: "stopped" | "run";
+  port?: number;
+  publicPath?: string;
 };
 
 const servicesState: { [Key in keyof ServiceConfig]?: ServiceState } = {};
@@ -47,6 +49,19 @@ app.get("/api/services/config/:serviceKey", (req, res) => {
 
 app.get("/api/services/state", (req, res) => {
   res.send(servicesState);
+  res.end();
+});
+
+app.get("/api/services/state/:serviceKey", (req, res) => {
+  const { params } = req;
+  const { serviceKey } = params;
+
+  if (typeof serviceKey === "string") {
+    res.send(servicesState[serviceKey]);
+  } else {
+    res.send(servicesState);
+  }
+
   res.end();
 });
 

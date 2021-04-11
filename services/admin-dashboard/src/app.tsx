@@ -1,33 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import axios from "axios";
 
-import io from 'socket.io-client';
+import { services } from "../l-libs/utils";
 
-const socket = io("/", { path: "/socket", autoConnect: false });
+const { getConfig, getState, getSocket, useSocketEvent, useSocketConnect } = services;
+
+const socket = getSocket("/controller");
 
 export const App: React.FC = () => {
   const [servicesConfig, serServicesConfig] = useState<{ [key: string]: { port: number; publicPath: string } }>({});
-  const [servicesState, serServicesState] = useState<{ [key: string]: { status: "stopped" | "run" } }>({})
+  const [servicesState, serServicesState] = useState<{ [key: string]: { status: "stopped" | "run" } }>({});
 
   useEffect(() => {
-    axios.get("/api/services/config").then(({ data }) => serServicesConfig(data));
-    axios.get("/api/services/state").then(({ data }) => serServicesState(data));
+    getConfig({ baseUrl: "/controller" }).then(({ data }) => serServicesConfig(data));
+    getState({ baseUrl: "/controller" }).then(({ data }) => serServicesState(data));
   }, []);
 
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log(socket.id);
-    });
-    socket.on("services/run", ({ serviceKey }) => serServicesState(prev => ({
-      ...prev,
-      [serviceKey]: { ...prev[serviceKey], status: "run" }
-    })));
-    socket.on("services/stopped", ({ serviceKey }) => serServicesState(prev => ({
-      ...prev,
-      [serviceKey]: { ...prev[serviceKey], status: "stopped" }
-    })));
-    socket.connect();
-  }, [])
+  useSocketEvent(socket, "connect", () => {
+    console.log(socket.id);
+  });
+
+  useSocketEvent(socket, "services/run", ({ serviceKey }) => serServicesState(prev => ({
+    ...prev,
+    [serviceKey]: { ...prev[serviceKey], status: "run" }
+  })));
+
+  useSocketEvent(socket, "services/stopped", ({ serviceKey }) => serServicesState(prev => ({
+    ...prev,
+    [serviceKey]: { ...prev[serviceKey], status: "stopped" }
+  })));
+
+  useSocketConnect(socket);
 
   return (
     <div>

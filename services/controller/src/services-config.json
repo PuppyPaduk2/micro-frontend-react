@@ -1,18 +1,18 @@
 {
   "controller": {
     "port": 2999,
-    "publicPath": null
+    "publicPath": "http://0.0.0.0:2999"
   },
   "core": {
     "port": 3000,
-    "publicPath": "/core"
+    "publicPath": "http://0.0.0.0:3000"
   },
   "sign-in": {
     "port": 3010,
-    "publicPath": "/sign-in"
+    "publicPath": "http://0.0.0.0:3010"
   },
   "admin-dashboard": {
     "port": 3020,
-    "publicPath": "/admin-dashboard"
+    "publicPath": "http://0.0.0.0:3020"
   }
 }

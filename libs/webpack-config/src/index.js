@@ -2,6 +2,7 @@ const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const axios = require("axios");
+const { ModuleFederationPlugin } = require("webpack").container;
 
 const wp = (callback = (value) => value) => {
   return callback;
@@ -75,29 +76,37 @@ const webpackConfig = (config = {}) => {
     }),
   };
 
-  if (!result.devServer.proxy.length) {
+  if (
+    result.devServer &&
+    result.devServer.proxy instanceof Array &&
+    !result.devServer.proxy.length
+  ) {
     delete result.devServer.proxy;
   }
 
   return result;
 };
 
-const getConfig = (baseUrl, serviceKey) =>
+const controllerUrl = `http://0.0.0.0:2999`;
+
+const getConfig = () =>
   axios
-    .get(`${baseUrl}/api/services/config/${serviceKey}`)
+    .get(`${controllerUrl}/api/services/config`)
     .then(({ data }) => data)
     .catch(() => {});
 
-const runService = (baseUrl, serviceKey) =>
-  axios.post(`${baseUrl}/api/services/run`, { serviceKey }).catch(() => {});
+const runService = ({ serviceKey }) =>
+  axios
+    .post(`${controllerUrl}/api/services/run`, { serviceKey })
+    .catch(() => {});
 
-const stoppedService = (baseUrl, serviceKey) => {
+const stoppedService = ({ serviceKey }) => {
   let request = null;
 
   return () => {
     if (!request) {
       request = axios
-        .post(`${baseUrl}/api/services/stopped`, { serviceKey })
+        .post(`${controllerUrl}/api/services/stopped`, { serviceKey })
         .finally(() => process.exit(0));
     }
 
@@ -106,34 +115,74 @@ const stoppedService = (baseUrl, serviceKey) => {
 };
 
 const serviceWebpackConfig = async (config = {}) => {
-  const baseUrl = `http://localhost:2999`;
   const serviceKey = wp(config.serviceKey)(null);
-  const serviceConfig = await wp(config.serviceConfig)(getConfig)(
-    baseUrl,
-    serviceKey
-  );
+  const serviceConfigs =
+    wp(config.serviceConfigs)(null) || ((await getConfig()) ?? {});
+  const serviceConfig = serviceConfigs[serviceKey];
 
   if (!serviceConfig) process.exit(1);
 
-  const { port } = serviceConfig;
+  const { port, publicPath } = serviceConfig;
+  const libScope = serviceKey.replace(/\-/g, "_");
+
+  delete serviceConfigs.controller;
+  delete serviceConfigs["admin-dashboard"];
+  delete serviceConfigs[serviceKey];
 
   return webpackConfig({
     ...config,
     output: (output) =>
-      wp(config.output)({
-        ...output,
-        publicPath: `http://localhost:${port}/`,
-      }),
+      wp(config.output)({ ...output, publicPath: `${publicPath}/` }),
+    devServerProxy: (proxy) =>
+      wp(config.devServerProxy)([
+        ...proxy,
+        {
+          context: ["/controller/api"],
+          pathRewrite: { "^/controller": "/" },
+          changeOrigin: true,
+          cookieDomainRewrite: "localhost",
+          target: "http://localhost:2999",
+          secure: false,
+        },
+        {
+          context: ["/controller/socket"],
+          pathRewrite: { "^/controller": "/" },
+          target: "ws://localhost:2999",
+          ws: true,
+          secure: false,
+        },
+        ...Object.entries(serviceConfigs).map(([key, { publicPath }]) => ({
+          context: [`/${key}`],
+          pathRewrite: { [`^/${key}`]: "" },
+          changeOrigin: true,
+          cookieDomainRewrite: "localhost",
+          target: publicPath,
+          secure: false,
+        })),
+      ]),
     devServer: (devServer) =>
       wp(config.devServer)({
         ...devServer,
+        publicPath,
         port,
         after: () => {
-          runService(baseUrl, serviceKey);
-          process.on("SIGHUP", stoppedService(baseUrl, serviceKey));
-          process.on("SIGINT", stoppedService(baseUrl, serviceKey));
+          runService({ serviceKey });
+          process.on("SIGHUP", stoppedService({ serviceKey }));
+          process.on("SIGINT", stoppedService({ serviceKey }));
         },
       }),
+    plugins: (plugins) =>
+      wp(config.plugins)([
+        ...plugins,
+        new ModuleFederationPlugin({
+          name: libScope,
+          library: { type: "var", name: libScope },
+          filename: wp(config.remoteFile)("remote.js"),
+          exposes: wp(config.exposes)({}),
+          remotes: wp(config.remotes)({}),
+          shared: wp(config.shared)({}),
+        }),
+      ]),
   });
 };
 
