@@ -1,0 +1,37 @@
+{
+  "controller": {
+    "port": 2998,
+    "host": "0.0.0.0:2998",
+    "publicPath": "http://0.0.0.0:2998"
+  },
+  "admin": {
+    "port": 2999,
+    "host": "0.0.0.0:2999",
+    "publicPath": "http://0.0.0.0:2999"
+  },
+  "core": {
+    "port": 3000,
+    "host": "0.0.0.0:3000",
+    "publicPath": "http://0.0.0.0:3000"
+  },
+  "auth": {
+    "port": 3010,
+    "host": "0.0.0.0:3010",
+    "publicPath": "http://0.0.0.0:3010"
+  },
+  "dashboard": {
+    "port": 3020,
+    "host": "0.0.0.0:3020",
+    "publicPath": "http://0.0.0.0:3020"
+  },
+  "users": {
+    "port": 3030,
+    "host": "0.0.0.0:3030",
+    "publicPath": "http://0.0.0.0:3030"
+  },
+  "chat": {
+    "port": 3040,
+    "host": "0.0.0.0:3040",
+    "publicPath": "http://0.0.0.0:3040"
+  }
+}

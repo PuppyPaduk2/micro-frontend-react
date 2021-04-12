@@ -1,0 +1,14 @@
+{
+  "dashboard": {
+    "title": "Main",
+    "routeKey": "dashboard"
+  },
+  "users": {
+    "title": "Users",
+    "routeKey": "users"
+  },
+  "chat": {
+    "title": "Chat",
+    "routeKey": "chat"
+  }
+}

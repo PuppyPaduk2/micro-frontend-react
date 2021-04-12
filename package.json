@@ -4,7 +4,8 @@
   "description": "This repo show how use module federation plugin from webpack.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start-service-controller": "webpack -c ./webpack/service-controller.js --watch",
+    "start-service-admin": "webpack serve -c ./webpack/service-admin.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,45 @@
   "bugs": {
     "url": "https://github.com/EvgenyiFedotov/micro-frontend-react/issues"
   },
-  "homepage": "https://github.com/EvgenyiFedotov/micro-frontend-react#readme"
+  "homepage": "https://github.com/EvgenyiFedotov/micro-frontend-react#readme",
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/plugin-proposal-decorators": "^7.13.15",
+    "@babel/plugin-transform-object-assign": "^7.12.13",
+    "@babel/plugin-transform-runtime": "^7.13.15",
+    "@babel/preset-env": "^7.13.15",
+    "@babel/preset-react": "^7.13.13",
+    "@babel/preset-typescript": "^7.13.0",
+    "@babel/runtime": "^7.13.10",
+    "@svgr/webpack": "^5.5.0",
+    "@types/antd": "^1.0.0",
+    "@types/axios": "^0.14.0",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
+    "@types/react-router-dom": "^5.1.7",
+    "@types/socket.io-client": "^1.4.36",
+    "babel-loader": "^8.2.2",
+    "core-js": "^3.10.1",
+    "css-loader": "^5.2.1",
+    "html-webpack-plugin": "^5.3.1",
+    "mini-css-extract-plugin": "^1.4.1",
+    "nodemon-webpack-plugin": "^4.5.2",
+    "ts-loader": "^8.1.0",
+    "typescript": "^4.2.4",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.31.2",
+    "webpack-cli": "^4.6.0",
+    "webpack-dev-server": "^3.11.2",
+    "webpack-node-externals": "^2.5.2"
+  },
+  "dependencies": {
+    "antd": "^4.15.1",
+    "axios": "^0.21.1",
+    "express": "^4.17.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.2.0",
+    "socket.io": "^4.0.1",
+    "socket.io-client": "^4.0.1"
+  }
 }
