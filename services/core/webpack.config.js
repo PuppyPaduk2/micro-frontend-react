@@ -5,5 +5,6 @@ module.exports = serviceWebpackConfig({
   shared: () => ({
     react: { singleton: true, eager: true },
     "react-dom": { singleton: true, eager: true },
+    antd: { singleton: true, eager: true },
   }),
 });

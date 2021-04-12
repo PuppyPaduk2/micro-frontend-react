@@ -1,14 +1,14 @@
 {
   "dashboard": {
     "title": "Main",
-    "serviceKey": "dashboard"
+    "routeKey": "dashboard"
   },
   "users": {
     "title": "Users",
-    "serviceKey": "users"
+    "routeKey": "users"
   },
   "chat": {
     "title": "Chat",
-    "serviceKey": "chat"
+    "routeKey": "chat"
   }
 }
