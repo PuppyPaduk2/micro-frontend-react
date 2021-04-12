@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Button } from "antd";
 
 export const App: React.FC = () => {
   useEffect(() => {
@@ -6,6 +7,8 @@ export const App: React.FC = () => {
   }, []);
 
   return (
-    <div>Auth</div>
+    <div>
+      <Button>Send</Button>
+    </div>
   );
 };

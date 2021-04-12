@@ -1,11 +1,11 @@
 import React from 'react';
+import { Layout } from "libs/components/layout";
 
-import { Layout } from "./layout";
 import { Services } from "./services";
 
 export const App: React.FC = () => {
   return (
-    <Layout>
+    <Layout footer={<>@service/admin</>}>
       <Services />
     </Layout>
   );
