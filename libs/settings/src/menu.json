@@ -1,0 +1,14 @@
+{
+  "dashboard": {
+    "title": "Main",
+    "serviceKey": "dashboard"
+  },
+  "users": {
+    "title": "Users",
+    "serviceKey": "users"
+  },
+  "chat": {
+    "title": "Chat",
+    "serviceKey": "chat"
+  }
+}

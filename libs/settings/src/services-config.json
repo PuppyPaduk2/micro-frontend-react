@@ -18,5 +18,20 @@
     "port": 3010,
     "host": "0.0.0.0:3010",
     "publicPath": "http://0.0.0.0:3010"
+  },
+  "dashboard": {
+    "port": 3020,
+    "host": "0.0.0.0:3020",
+    "publicPath": "http://0.0.0.0:3020"
+  },
+  "users": {
+    "port": 3030,
+    "host": "0.0.0.0:3030",
+    "publicPath": "http://0.0.0.0:3030"
+  },
+  "chat": {
+    "port": 3040,
+    "host": "0.0.0.0:3040",
+    "publicPath": "http://0.0.0.0:3040"
   }
 }

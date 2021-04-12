@@ -118,8 +118,18 @@ const stoppedService = ({ serviceKey }) => {
   };
 };
 
+const getPackageName = () => {
+  try {
+    const packageJsonFile = path.resolve(process.cwd(), "./package.json");
+    return require(packageJsonFile).name;
+  } catch (error) {
+    return null;
+  }
+};
+
 const serviceWebpackConfig = async (config = {}) => {
-  const serviceKey = wp(config.serviceKey)(null);
+  const packageName = getPackageName();
+  const serviceKey = wp(config.serviceKey)(packageName.split("/")[1]);
   const serviceConfigs =
     wp(config.serviceConfigs)(null) || ((await getConfig()) ?? {});
   const serviceConfig = serviceConfigs[serviceKey];
