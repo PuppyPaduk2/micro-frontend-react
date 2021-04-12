@@ -4,9 +4,7 @@
   "description": "This repo show how use module federation plugin from webpack.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "spoc": "node ./libs/spoctopus/src/index.js",
-    "spoc:search": "npm run spoc search"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
