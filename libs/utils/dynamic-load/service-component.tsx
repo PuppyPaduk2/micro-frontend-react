@@ -5,14 +5,26 @@ import { getState, getSocket, useSocketEvent, useSocketConnect } from "../servic
 
 const socket = getSocket("/controller");
 
-export const ServiceComponent: FC<{ serviceKey: string; expose: string; }> = ({ serviceKey, expose }) => {
+export const ServiceComponent: FC<{
+  serviceKey: string;
+  expose: string;
+  baseUrl?: string;
+  remoteFile?: string;
+  scope?: string;
+}> = ({
+  serviceKey,
+  expose,
+  baseUrl = "/controller",
+  remoteFile = "/remote.js",
+  scope = serviceKey.replace(/\-/g, "_"),
+}) => {
   const [serviceState, setServiceState] = useState<any>(null);
 
   useEffect(() => {
-    getState({ baseUrl: "/controller", serviceKey })
+    getState({ serviceKey, baseUrl })
       .then(({ data }) => setServiceState(data))
       .catch(() => {});
-  }, [serviceKey]);
+  }, [serviceKey, baseUrl]);
 
   useSocketEvent(
     socket,
@@ -28,8 +40,8 @@ export const ServiceComponent: FC<{ serviceKey: string; expose: string; }> = ({ 
     if (serviceState.status === "run") {
       return (
         <LoadComponent
-          url={`/${serviceKey}/remote.js`}
-          scope={serviceKey.replace(/\-/g, "_")}
+          url={`/${serviceKey}${remoteFile}`}
+          scope={scope}
           modulePath={expose}
         />
       );

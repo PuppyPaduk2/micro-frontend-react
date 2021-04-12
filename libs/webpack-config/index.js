@@ -40,6 +40,10 @@ module.exports = (config = {}) => {
     }),
     resolve: wp(config.resolve)({
       extensions: [".tsx", ".ts", ".js"],
+      alias: {
+        libs: path.resolve(process.cwd(), "./libs"),
+        services: path.resolve(process.cwd(), "./services"),
+      },
       modules: [
         path.resolve(process.cwd(), "./src"),
         path.resolve(process.cwd(), "./node_modules"),

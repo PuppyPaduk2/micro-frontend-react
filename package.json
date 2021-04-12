@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start-service-controller": "webpack -c ./webpack/service-controller.js --watch",
-    "start-service-admin": "webpack serve -c ./webpack/service-admin.js"
+    "start-service-admin": "webpack serve -c ./webpack/service-admin.js",
+    "start-service-core": "webpack serve -c ./webpack/service-core.js",
+    "start-service-auth": "webpack serve -c ./webpack/service-auth.js"
   },
   "repository": {
     "type": "git",

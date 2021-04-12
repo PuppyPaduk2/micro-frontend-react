@@ -47,7 +47,7 @@ module.exports = async (config = {}) => {
   const serviceConfig = serviceConfigs[serviceKey] || {};
 
   const { port, publicPath = "" } = serviceConfig;
-  const libScope = serviceKey.replace(/\-/g, "_");
+  const scope = wp(config.scope)(serviceKey.replace(/\-/g, "_"));
 
   delete serviceConfigs.controller;
   delete serviceConfigs["admin-dashboard"];
@@ -116,12 +116,22 @@ module.exports = async (config = {}) => {
           template: `./services/${serviceKey}/public/index.html`,
         }),
         new ModuleFederationPlugin({
-          name: libScope,
-          library: { type: "var", name: libScope },
+          name: scope,
+          library: { type: "var", name: scope },
           filename: wp(config.remoteFile)("remote.js"),
-          exposes: wp(config.exposes)({}),
+          exposes: Object.entries(wp(config.exposes)({})).reduce(
+            (memo, [key, exposePath]) => ({
+              ...memo,
+              [key]: path.join("./services", serviceKey, exposePath),
+            }),
+            {}
+          ),
           remotes: wp(config.remotes)({}),
-          shared: wp(config.shared)({}),
+          shared: wp(config.shared)({
+            react: { singleton: true },
+            "react-dom": { singleton: true },
+            antd: { singleton: true },
+          }),
         }),
       ]),
   });
