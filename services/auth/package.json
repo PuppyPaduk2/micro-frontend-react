@@ -1,5 +1,5 @@
 {
-  "name": "@services/sign-in",
+  "name": "@services/auth",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",

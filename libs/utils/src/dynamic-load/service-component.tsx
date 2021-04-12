@@ -14,9 +14,13 @@ export const ServiceComponent: FC<{ serviceKey: string; expose: string; }> = ({ 
       .catch(() => {});
   }, [serviceKey]);
 
-  useSocketEvent(socket, "services/run", () => setServiceState((prev) => ({ ...prev, status: "run" })));
+  useSocketEvent(
+    socket,
+    "services/run",
+    () => setServiceState((prev) => !prev ? prev : ({ ...prev, status: "run" })),
+  );
 
-  useSocketEvent(socket, "services/stopped", () => setServiceState((prev) => ({ ...prev, status: "stopped" })));
+  // useSocketEvent(socket, "services/stopped", () => setServiceState((prev) => ({ ...prev, status: "stopped" })));
 
   useSocketConnect(socket);
 

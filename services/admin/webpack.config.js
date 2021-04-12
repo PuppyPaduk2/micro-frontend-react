@@ -1,7 +1,7 @@
 const { serviceWebpackConfig } = require("./l-libs/webpack-config");
 
 module.exports = serviceWebpackConfig({
-  serviceKey: () => "admin-dashboard",
+  serviceKey: () => "admin",
   // serviceConfigs: () => ({
   //   "admin-dashboard": {
   //     port: 3010,

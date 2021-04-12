@@ -9,6 +9,9 @@
     },
     "utils": {
       "relativePath": "../libs/utils/package.json"
+    },
+    "settings": {
+      "relativePath": "../libs/settings/package.json"
     }
   }
 }

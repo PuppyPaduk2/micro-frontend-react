@@ -6,7 +6,7 @@ const { ServiceComponent } = dynamicLoad;
 export const App: React.FC = () => {
   return <div>
     <ServiceComponent
-      serviceKey="sign-in"
+      serviceKey="auth"
       expose="./App"
     />
   </div>;

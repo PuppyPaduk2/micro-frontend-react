@@ -1,8 +1,11 @@
 import express from "express";
 import * as http from "http";
-import servicesConfig from "./services-config.json";
 import axios from "axios";
 import { Server } from 'socket.io';
+
+import { getServicesConfig } from "../l-libs/settings";
+
+const servicesConfig = getServicesConfig();
 
 type ServiceConfig = typeof servicesConfig;
 
@@ -13,7 +16,7 @@ type ServiceState = {
 };
 
 const servicesState: { [Key in keyof ServiceConfig]?: ServiceState } = {};
-const port = process.env.PORT || 2999;
+const port = process.env.PORT || servicesConfig.controller.port;
 const app = express();
 
 const server = http.createServer(app);
@@ -30,7 +33,7 @@ io.on('connection', (socket) => {
 app.use(express.json());
 
 app.get("/api/services/config", (req, res) => {
-  res.send(require("./services-config.json"));
+  res.send(getServicesConfig());
   res.end();
 });
 
@@ -39,9 +42,9 @@ app.get("/api/services/config/:serviceKey", (req, res) => {
   const { serviceKey } = params;
 
   if (typeof serviceKey === "string") {
-    res.send(require("./services-config.json")[serviceKey] ?? null);
+    res.send(getServicesConfig()[serviceKey] ?? null);
   } else {
-    res.send(require("./services-config.json"));
+    res.send(getServicesConfig());
   }
 
   res.end();
@@ -105,7 +108,7 @@ app.get("*", (req, res) => {
 server.listen(port, () => {
   console.log(`http://localhost:${port}`);
 
-  const serviceConfig: Record<keyof ServiceConfig, ServiceConfig[keyof ServiceConfig]> = require("./services-config.json");
+  const serviceConfig: Record<keyof ServiceConfig, ServiceConfig[keyof ServiceConfig]> = getServicesConfig();
 
   Object.entries(serviceConfig).forEach(([serviceKey, config]) => {
     axios.get(`http://localhost:${config.port}`).then(() => {

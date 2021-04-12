@@ -4,6 +4,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const axios = require("axios");
 const { ModuleFederationPlugin } = require("webpack").container;
 
+const { getServicesConfig } = require("../l-libs/settings");
+
 const wp = (callback = (value) => value) => {
   return callback;
 };
@@ -87,17 +89,17 @@ const webpackConfig = (config = {}) => {
   return result;
 };
 
-const controllerUrl = `http://0.0.0.0:2999`;
+const controllerConfig = getServicesConfig().controller;
 
 const getConfig = () =>
   axios
-    .get(`${controllerUrl}/api/services/config`)
+    .get(`${controllerConfig.publicPath}/api/services/config`)
     .then(({ data }) => data)
     .catch(() => {});
 
 const runService = ({ serviceKey }) =>
   axios
-    .post(`${controllerUrl}/api/services/run`, { serviceKey })
+    .post(`${controllerConfig.publicPath}/api/services/run`, { serviceKey })
     .catch(() => {});
 
 const stoppedService = ({ serviceKey }) => {
@@ -106,7 +108,9 @@ const stoppedService = ({ serviceKey }) => {
   return () => {
     if (!request) {
       request = axios
-        .post(`${controllerUrl}/api/services/stopped`, { serviceKey })
+        .post(`${controllerConfig.publicPath}/api/services/stopped`, {
+          serviceKey,
+        })
         .finally(() => process.exit(0));
     }
 
@@ -141,13 +145,13 @@ const serviceWebpackConfig = async (config = {}) => {
           pathRewrite: { "^/controller": "/" },
           changeOrigin: true,
           cookieDomainRewrite: "localhost",
-          target: "http://localhost:2999",
+          target: `http://${controllerConfig.host}`,
           secure: false,
         },
         {
           context: ["/controller/socket"],
           pathRewrite: { "^/controller": "/" },
-          target: "ws://localhost:2999",
+          target: `ws://${controllerConfig.host}`,
           ws: true,
           secure: false,
         },
