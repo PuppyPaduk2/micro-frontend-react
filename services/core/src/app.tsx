@@ -1,40 +1,20 @@
 import React, { FC, useEffect } from 'react';
-import { ServiceComponent } from "libs/utils/dynamic-load";
 import { Layout } from "libs/components/layout";
-
-import { useDynamicScript, loadModule } from "libs/utils/dynamic-load"
+import { LazyWait } from "libs/components/lazy-wait";
+import { requestExpose } from "libs/request-expose";
 
 export const App: FC = () => {
-  return (
-    <Layout>
-      <ServiceComponent
-        serviceKey="dashboard"
-        expose="./App"
-      />
-      <ServiceComponent
-        serviceKey="auth"
-        expose="./App"
-      />
-      <Test />
-    </Layout>
-  );
-};
-
-const Test: FC = () => {
-  const { ready } = useDynamicScript({ url: "/auth/remote.js" });
-
   useEffect(() => {
-    console.log("Test");
+    requestExpose({ serviceKey: "auth", scope: "auth", expose: "./guard" }).then(({ add }) => {
+      console.log(add("core1", 1));
+      console.log(add("core2", 2));
+    });
   }, []);
 
-  useEffect(() => {
-    if (ready) {
-      loadModule("auth", "./guard")().then(({ add }) => {
-        console.log(add("test3", 13));
-        console.log(add("test24", 125));
-      });
-    }
-  }, [ready]);
-
-  return <></>;
+  return (
+    <Layout>
+      <LazyWait serviceKey="auth" scope="auth" expose="./App" failed={<>FASD</>} />
+      <LazyWait serviceKey="dashboard" scope="dashboard" expose="./App" />
+    </Layout>
+  );
 };

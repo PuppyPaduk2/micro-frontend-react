@@ -3,19 +3,10 @@ import * as http from "http";
 import axios from "axios";
 import { Server } from 'socket.io';
 
-import { getServicesConfig } from "../../libs/settings";
+import servicesConfig from "libs/settings/services-config.json";
+import { ServiceState, ServiceKey, ServiceConfig } from "libs/types";
 
-const servicesConfig = getServicesConfig();
-
-type ServiceConfig = typeof servicesConfig;
-
-type ServiceState = {
-  status: "stopped" | "run";
-  port?: number;
-  publicPath?: string;
-};
-
-const servicesState: { [Key in keyof ServiceConfig]?: ServiceState } = {};
+const servicesState: Record<string, ServiceState> = {};
 const port = process.env.PORT || servicesConfig.controller.port;
 const app = express();
 
@@ -25,15 +16,15 @@ const io = new Server(server, { path: "/socket" });
 io.on('connection', (socket) => {
   console.log('a user connected');
 
-  socket.on("disconnect", (reason) => {
+  socket.on("disconnect", (_reason) => {
     console.log('a user disconnected');
   });
 });
 
 app.use(express.json());
 
-app.get("/api/services/config", (req, res) => {
-  res.send(getServicesConfig());
+app.get("/api/services/config", (_req, res) => {
+  res.send(servicesConfig);
   res.end();
 });
 
@@ -42,15 +33,15 @@ app.get("/api/services/config/:serviceKey", (req, res) => {
   const { serviceKey } = params;
 
   if (typeof serviceKey === "string") {
-    res.send(getServicesConfig()[serviceKey] ?? null);
+    res.send(servicesConfig[serviceKey as ServiceKey] ?? null);
   } else {
-    res.send(getServicesConfig());
+    res.send(servicesConfig);
   }
 
   res.end();
 });
 
-app.get("/api/services/state", (req, res) => {
+app.get("/api/services/state", (_req, res) => {
   res.send(servicesState);
   res.end();
 });
@@ -100,7 +91,7 @@ app.post("/api/services/stopped", (req, res) => {
   res.end();
 });
 
-app.get("*", (req, res) => {
+app.get("*", (_, res) => {
   res.send("Server app");
   res.end();
 });
@@ -108,7 +99,7 @@ app.get("*", (req, res) => {
 server.listen(port, () => {
   console.log(`http://localhost:${port}`);
 
-  const serviceConfig: Record<keyof ServiceConfig, ServiceConfig[keyof ServiceConfig]> = getServicesConfig();
+  const serviceConfig: Record<ServiceKey, ServiceConfig> = servicesConfig;
 
   Object.entries(serviceConfig).forEach(([serviceKey, config]) => {
     axios.get(`http://localhost:${config.port}`).then(() => {

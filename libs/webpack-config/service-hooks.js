@@ -3,6 +3,7 @@ const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 const { baseHooks } = require("./base-hooks");
 const hook = require("./hook");
@@ -28,6 +29,13 @@ const output = hook(baseHooks.output(), async ({ value, context }) => ({
 
 const plugins = hook(baseHooks.plugins(), async ({ value, context }) => [
   ...(await value),
+  new ForkTsCheckerWebpackPlugin({
+    typescript: {
+      configOverwrite: {
+        include: [`./services/${context.serviceKey}/src/index.*`],
+      },
+    },
+  }),
   new MiniCssExtractPlugin(),
   new HtmlWebpackPlugin({
     template: `./services/${context.serviceKey}/public/index.html`,
@@ -50,6 +58,8 @@ const plugins = hook(baseHooks.plugins(), async ({ value, context }) => [
           react: { singleton: true },
           "react-dom": { singleton: true },
           antd: { singleton: true },
+          "libs/socket": { singleton: true },
+          "libs/dynamic-script": { singleton: true },
         },
       })
   ),

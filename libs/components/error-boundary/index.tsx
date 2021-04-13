@@ -1,7 +1,7 @@
-import React, { Component, ErrorInfo, PropsWithChildren } from 'react';
+import React, { Component, ErrorInfo, PropsWithChildren, ReactChild } from 'react';
 
 type Props = PropsWithChildren<{
-  title?: string;
+  title?: ReactChild;
 }>;
 
 type State = {

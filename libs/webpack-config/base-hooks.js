@@ -41,6 +41,7 @@ const _module = hook({
 const resolve = hook({
   extensions: [".tsx", ".ts", ".js"],
   alias: {
+    api: path.resolve(process.cwd(), "./api"),
     libs: path.resolve(process.cwd(), "./libs"),
     services: path.resolve(process.cwd(), "./services"),
   },

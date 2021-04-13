@@ -11,11 +11,13 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "removeComments": true,
+    "resolveJsonModule": true,
     "baseUrl": "./",
     "paths": {
-      "libs": ["./libs"]
+      "api": ["./api"],
+      "libs": ["./libs"],
+      "services": ["./services"]
     }
   },
   "exclude": ["node_modules"],
-  "include": ["./**/*"]
 }

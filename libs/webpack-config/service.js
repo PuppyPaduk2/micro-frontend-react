@@ -4,8 +4,12 @@ const { getServicesConfig } = require("../settings").utils;
 
 module.exports = build(
   serviceHooks,
-  async ({ serviceKey, modulesFederation = [] }) => {
-    const servicesConfig = await getServicesConfig();
+  async ({
+    servicesConfig: _servicesConfig,
+    serviceKey,
+    modulesFederation = [],
+  }) => {
+    const servicesConfig = _servicesConfig || (await getServicesConfig());
     const serviceConfig = servicesConfig[serviceKey] || {};
 
     delete servicesConfig.controller;
