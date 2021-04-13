@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { ErrorBoundary } from "libs/components/error-boundary";
+
 import { useDynamicScript } from "./use-dynamic-script";
 import { loadModule } from "./load-module";
 
@@ -20,8 +22,10 @@ export const LoadComponent: React.FC<{
   const Component = React.lazy(loadModule(scope, modulePath));
 
   return (
-    <React.Suspense fallback="Loading System">
-      <Component />
-    </React.Suspense>
+    <ErrorBoundary title="Error loading component">
+      <React.Suspense fallback="Loading System">
+        <Component />
+      </React.Suspense>
+    </ErrorBoundary>
   );
 };

@@ -6,8 +6,8 @@ const webpackConfig = require("../libs/webpack-config");
 
 module.exports = webpackConfig({
   entry: () => "./services/controller/index.ts",
-  resolve: (resolve) => ({
-    ...resolve,
+  resolve: ({ value }) => ({
+    ...value,
     modules: [
       path.resolve(process.cwd(), "./services/controller"),
       path.resolve(process.cwd(), "./node_modules"),

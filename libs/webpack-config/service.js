@@ -1,138 +1,22 @@
-const path = require("path");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const axios = require("axios");
-const { ModuleFederationPlugin } = require("webpack").container;
+const { serviceHooks } = require("./service-hooks");
+const build = require("./build");
+const { getServicesConfig } = require("../settings").utils;
 
-const webpackConfig = require(".");
-const { getServicesConfig } = require("../settings");
-const wp = require("./wp");
+module.exports = build(
+  serviceHooks,
+  async ({ serviceKey, modulesFederation = [] }) => {
+    const servicesConfig = await getServicesConfig();
+    const serviceConfig = servicesConfig[serviceKey] || {};
 
-const controllerConfig = getServicesConfig().controller;
+    delete servicesConfig.controller;
+    delete servicesConfig.admin;
+    delete servicesConfig[serviceKey];
 
-const getConfig = async () => {
-  try {
-    const url = `${controllerConfig.publicPath}/api/services/config`;
-    return (await axios.get(url)).data;
-  } catch (error) {
-    return {};
+    return {
+      servicesConfig,
+      serviceConfig,
+      serviceKey,
+      modulesFederation,
+    };
   }
-};
-
-const runService = ({ serviceKey }) => {
-  return axios
-    .post(`${controllerConfig.publicPath}/api/services/run`, { serviceKey })
-    .catch(() => {});
-};
-
-const stoppedService = ({ serviceKey }) => {
-  let request = null;
-
-  return () => {
-    if (!request) {
-      request = axios
-        .post(`${controllerConfig.publicPath}/api/services/stopped`, {
-          serviceKey,
-        })
-        .finally(() => process.exit(0));
-    }
-
-    return request;
-  };
-};
-
-module.exports = async (config = {}) => {
-  const serviceKey = wp(config.serviceKey)(null);
-  const serviceConfigs = wp(config.serviceConfigs)(null) || (await getConfig());
-  const serviceConfig = serviceConfigs[serviceKey] || {};
-
-  const { port, publicPath = "" } = serviceConfig;
-  const scope = wp(config.scope)(serviceKey.replace(/\-/g, "_"));
-
-  delete serviceConfigs.controller;
-  delete serviceConfigs["admin-dashboard"];
-  delete serviceConfigs[serviceKey];
-
-  return webpackConfig({
-    ...config,
-    entry: () =>
-      wp(config.entry)([
-        "core-js/stable",
-        `./services/${serviceKey}/src/index`,
-      ]),
-    resolve: (resolve) => ({
-      ...resolve,
-      modules: [
-        path.resolve(process.cwd(), "./services", serviceKey),
-        path.resolve(process.cwd(), "./node_modules"),
-      ],
-    }),
-    output: (output) =>
-      wp(config.output)({ ...output, publicPath: `${publicPath}/` }),
-    devServerProxy: (proxy) =>
-      wp(config.devServerProxy)([
-        ...proxy,
-        {
-          context: ["/controller/api"],
-          pathRewrite: { "^/controller": "/" },
-          changeOrigin: true,
-          cookieDomainRewrite: "localhost",
-          target: `http://${controllerConfig.host}`,
-          secure: false,
-        },
-        {
-          context: ["/controller/socket"],
-          pathRewrite: { "^/controller": "/" },
-          target: `ws://${controllerConfig.host}`,
-          ws: true,
-          secure: false,
-        },
-        ...Object.entries(serviceConfigs).map(([key, { publicPath }]) => ({
-          context: [`/${key}`],
-          pathRewrite: { [`^/${key}`]: "" },
-          changeOrigin: true,
-          cookieDomainRewrite: "localhost",
-          target: publicPath,
-          secure: false,
-        })),
-      ]),
-    devServer: (devServer) =>
-      wp(config.devServer)({
-        ...devServer,
-        publicPath,
-        port,
-        after: () => {
-          runService({ serviceKey });
-          process.on("SIGHUP", stoppedService({ serviceKey }));
-          process.on("SIGINT", stoppedService({ serviceKey }));
-        },
-      }),
-    plugins: (plugins) =>
-      wp(config.plugins)([
-        ...plugins,
-
-        new MiniCssExtractPlugin(),
-        new HtmlWebpackPlugin({
-          template: `./services/${serviceKey}/public/index.html`,
-        }),
-        new ModuleFederationPlugin({
-          name: scope,
-          library: { type: "var", name: scope },
-          filename: wp(config.remoteFile)("remote.js"),
-          exposes: Object.entries(wp(config.exposes)({})).reduce(
-            (memo, [key, exposePath]) => ({
-              ...memo,
-              [key]: path.join("./services", serviceKey, exposePath),
-            }),
-            {}
-          ),
-          remotes: wp(config.remotes)({}),
-          shared: wp(config.shared)({
-            react: { singleton: true },
-            "react-dom": { singleton: true },
-            antd: { singleton: true },
-          }),
-        }),
-      ]),
-  });
-};
+);
