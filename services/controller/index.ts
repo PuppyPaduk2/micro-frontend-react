@@ -3,7 +3,7 @@ import * as http from "http";
 import axios from "axios";
 import { Server } from 'socket.io';
 
-import servicesConfig from "libs/settings/services-config.json";
+import servicesConfig from "settings/services-config.json";
 import { ServiceState, ServiceKey, ServiceConfig } from "libs/types";
 
 const servicesState: Record<string, ServiceState> = {};

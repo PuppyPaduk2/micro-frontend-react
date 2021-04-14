@@ -1,4 +1,5 @@
 const path = require("path");
+const axios = require("axios");
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -7,7 +8,7 @@ const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 const { baseHooks } = require("./base-hooks");
 const hook = require("./hook");
-const { getServicesConfig, utils } = require("../settings");
+const servicesConfig = require("../../settings/services-config.json");
 
 const entry = hook([], ({ context }) => [
   "core-js/stable",
@@ -65,16 +66,38 @@ const plugins = hook(baseHooks.plugins(), async ({ value, context }) => [
   ),
 ]);
 
-const controllerConfig = getServicesConfig().controller;
+const controllerConfig = servicesConfig.controller;
+
+const runService = ({ serviceKey }) => {
+  return axios
+    .post(`${controllerConfig.publicPath}/api/services/run`, { serviceKey })
+    .catch(() => {});
+};
+
+const stopService = ({ serviceKey }) => {
+  let request = null;
+
+  return () => {
+    if (!request) {
+      request = axios
+        .post(`${controllerConfig.publicPath}/api/services/stopped`, {
+          serviceKey,
+        })
+        .finally(() => process.exit(0));
+    }
+
+    return request;
+  };
+};
 
 const devServer = hook(baseHooks.devServer(), async ({ value, context }) => ({
   ...(await value),
   port: context.serviceConfig.port,
   publicPath: context.serviceConfig.publicPath,
   after: () => {
-    utils.runService({ serviceKey: context.serviceKey });
-    process.on("SIGHUP", utils.stopService({ serviceKey: context.serviceKey }));
-    process.on("SIGINT", utils.stopService({ serviceKey: context.serviceKey }));
+    runService({ serviceKey: context.serviceKey });
+    process.on("SIGHUP", stopService({ serviceKey: context.serviceKey }));
+    process.on("SIGINT", stopService({ serviceKey: context.serviceKey }));
   },
   proxy: [
     {

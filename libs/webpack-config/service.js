@@ -1,6 +1,6 @@
 const { serviceHooks } = require("./service-hooks");
 const build = require("./build");
-const { getServicesConfig } = require("../settings").utils;
+const __servicesConfig = require("../../settings/services-config.json");
 
 module.exports = build(
   serviceHooks,
@@ -9,7 +9,7 @@ module.exports = build(
     serviceKey,
     modulesFederation = [],
   }) => {
-    const servicesConfig = _servicesConfig || (await getServicesConfig());
+    const servicesConfig = _servicesConfig || __servicesConfig;
     const serviceConfig = servicesConfig[serviceKey] || {};
 
     delete servicesConfig.controller;

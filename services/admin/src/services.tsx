@@ -1,67 +1,80 @@
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Table } from "antd";
-
-import { getConfig, getSocket, getState, useSocketConnect, useSocketEvent } from "../../../libs/utils/services";
+import servicesConfig from "settings/services-config.json";
+import { getServicesState } from "api/controller";
+import { ServiceKey } from "libs/types";
+import { useSocket } from "libs/hooks/use-socket";
 
 type Service = {
-  serviceKey: string;
+  serviceKey: ServiceKey;
   publicPath: string,
   status: "stopped" | "run" | null;
 };
 
-const socket = getSocket("/controller");
+const _services: Service[] = Object.entries(servicesConfig).map(([serviceKey, config]) => ({
+  serviceKey: serviceKey as ServiceKey,
+  publicPath: config.publicPath,
+  status: null,
+}));
+
+const columns = [
+  {
+    title: 'Service key',
+    dataIndex: 'serviceKey',
+    key: 'serviceKey',
+  },
+  {
+    title: 'Public path',
+    dataIndex: 'publicPath',
+    key: 'publicPath',
+  },
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    key: 'status',
+  },
+];
 
 export const Services:FC = () => {
-  const [services, setServices] = useState<Service[]>([]);
+  const [services, setServices] = useState<Service[]>(_services);
 
   useEffect(() => {
-    getConfig({ baseUrl: "/controller" })
-      .then(({ data }) => setServices(
-        Object.entries(data).map(([serviceKey, config]) => ({ ...(config as any), serviceKey, status: null, })),
-      ));
-    getState({ baseUrl: "/controller" })
-      .then(({ data }) => setServices(
-        (services) => services.map((service) => ({ ...service, status: data[service.serviceKey].status })),
-      ));
+    getServicesState().then((servicesState) => {
+      setServices((services) => services.map((service) => {
+        const state = servicesState[service.serviceKey];
+        if (state) service.status = state.status;
+        return service;
+      }));
+    });
   }, []);
 
-  useSocketEvent(socket, "connect", () => {
-    console.log(socket.id);
-  });
+  const socket = useSocket("/", "/controller/socket");
 
-  useSocketEvent(socket, "services/run", ({ serviceKey }) => {
-    setServices((services) => services.map((service) => {
-      if (service.serviceKey === serviceKey) service.status = "run";
-      return service;
-    }));
-  });
+  useEffect(() => {
+    const run = (data: { serviceKey: ServiceKey }) => {
+      setServices((services) => services.map((service) => {
+        if (service.serviceKey === data.serviceKey) service.status = "run";
+        return service;
+      }));
+    };
 
-  useSocketEvent(socket, "services/stopped", ({ serviceKey }) => {
-    setServices((services) => services.map((service) => {
-      if (service.serviceKey === serviceKey) service.status = "stopped";
-      return service;
-    }));
-  });
+    const stopped = (data: { serviceKey: ServiceKey }) => {
+      setServices((services) => services.map((service) => {
+        if (service.serviceKey === data.serviceKey) service.status = "stopped";
+        return service;
+      }));
+    };
 
-  useSocketConnect(socket);
+    socket.on("services/run", run);
+    socket.on("services/stopped", stopped);
 
-  const columns = useMemo(() => [
-    {
-      title: 'Service key',
-      dataIndex: 'serviceKey',
-      key: 'serviceKey',
-    },
-    {
-      title: 'Public path',
-      dataIndex: 'publicPath',
-      key: 'publicPath',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-    },
-  ], []);
+    if (!socket.connected) socket.connect();
+
+    return () => {
+      socket.off("services/run", run);
+      socket.off("services/stopped", stopped);
+    }
+  }, [socket]);
 
   return <Table rowKey="serviceKey" dataSource={services} columns={columns} />;
 };

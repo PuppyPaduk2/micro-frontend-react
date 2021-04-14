@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useState } from "react";
-import axios from "axios";
 import { useSocket } from "libs/hooks/use-socket";
 import { ServiceKey, ServiceStatus, ServiceConfig } from "libs/types";
 import { Lazy } from "libs/components/lazy";
 import { getServiceState } from "api/controller";
+import servicesConfig from "settings/services-config.json";
 
 type Props = Omit<Parameters<typeof Lazy>[0], "src"> & {
   serviceKey: ServiceKey,
@@ -40,8 +40,9 @@ const useServiceConfig = (serviceKey: ServiceKey) => {
   const [config, setConfig] = useState<ServiceConfig | null>(null);
 
   useEffect(() => {
-    axios.get(`/controller/api/services/config/${serviceKey}`)
-      .then(({ data }) => setConfig(data));
+    const serviceConfig = servicesConfig[serviceKey];
+
+    if (serviceConfig) setConfig(serviceConfig);
   }, [serviceKey]);
 
   return config;

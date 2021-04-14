@@ -13,7 +13,7 @@ export const App: FC = () => {
 
   return (
     <Layout>
-      <LazyWait serviceKey="auth" scope="auth" expose="./App" failed={<>FASD</>} />
+      <LazyWait serviceKey="auth" scope="auth" expose="./App" />
       <LazyWait serviceKey="dashboard" scope="dashboard" expose="./App" />
     </Layout>
   );

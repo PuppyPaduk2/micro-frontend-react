@@ -1,4 +1,4 @@
-import servicesConfig from 'libs/settings/services-config.json'
+import servicesConfig from 'settings/services-config.json'
 
 export type ServiceStatus = "stopped" | "run";
 

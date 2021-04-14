@@ -1,7 +1,8 @@
-import { getServiceConfig, getServiceState } from "api/controller";
+import { getServiceState } from "api/controller";
 import { createScript, loadExpose } from "libs/dynamic-script";
 import { createSocket } from "libs/socket";
 import { ServiceKey, ServiceStatus } from "libs/types";
+import servicesConfig from "settings/services-config.json";
 
 type Props = {
   serviceKey: ServiceKey;
@@ -38,7 +39,7 @@ const waitService = (serviceKey: ServiceKey): Promise<ServiceStatus> => {
 
 export const requestExpose = (props: Props) => {
   return waitService(props.serviceKey).then(async () => {
-    const config = await getServiceConfig(props.serviceKey);
+    const config = servicesConfig[props.serviceKey];
     const script = createScript(`${config.publicPath}/${props.filename ?? "remote.js"}`);
 
     await script.load();
