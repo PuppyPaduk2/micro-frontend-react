@@ -6,8 +6,8 @@ import { requestExpose } from "libs/request-expose";
 export const App: FC = () => {
   useEffect(() => {
     requestExpose({ serviceKey: "auth", scope: "auth", expose: "./guard" }).then(({ add }) => {
-      console.log(add("core1", 1));
-      console.log(add("core2", 2));
+      console.log("@", add("core1", 1));
+      console.log("@", add("core2", 2));
     });
   }, []);
 

@@ -11,7 +11,6 @@ type Props = {
   filename?: string;
 };
 
-// TODO Maybe need to match with Lazy (Component)
 const waitService = (serviceKey: ServiceKey): Promise<ServiceStatus> => {
   return getServiceState(serviceKey).then(({ status }) => {
     if (status === "run") {

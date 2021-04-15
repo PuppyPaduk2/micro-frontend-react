@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ServiceKey, ServiceState } from "libs/types";
+import { ServiceKey, ServiceMode, ServiceState } from "libs/types";
 
 export const getServicesState = () => {
   return axios.get("/controller/api/services/state")
@@ -11,7 +11,11 @@ export const getServiceState = (serviceKey: ServiceKey) => {
     .then<ServiceState>(({ data }) => data);
 };
 
-// export const getServiceConfig = (serviceKey: ServiceKey) => {
-//   return axios.get(`/controller/api/services/config/${serviceKey}`)
-//     .then<ServiceConfig>(({ data }) => data);
-// };
+export const runService = (serviceKey: ServiceKey, mode: ServiceMode = "controller") => {
+  return axios.post(`/controller/api/services/run`, { serviceKey, mode });
+};
+
+export const stopService = (serviceKey: ServiceKey) => {
+  return axios.post(`/controller/api/services/stop`, { serviceKey });
+};
+

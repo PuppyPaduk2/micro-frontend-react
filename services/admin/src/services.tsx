@@ -1,80 +1,71 @@
-import React, { FC, useEffect, useState } from "react";
-import { Table } from "antd";
-import servicesConfig from "settings/services-config.json";
-import { getServicesState } from "api/controller";
-import { ServiceKey } from "libs/types";
-import { useSocket } from "libs/hooks/use-socket";
+import React, { FC, useMemo, useState } from "react";
+import { Button, Drawer, Table, Typography } from "antd";
+import { ServiceKey, ServiceMode, ServiceStatus } from "libs/types";
+import { ApiOutlined } from "@ant-design/icons";
+
+import { ServiceTools, ServiceToolsBar } from "./service-tools";
+import { useServices } from "libs/hooks/use-services";
 
 type Service = {
   serviceKey: ServiceKey;
   publicPath: string,
-  status: "stopped" | "run" | null;
+  status: ServiceStatus | null;
+  mode: ServiceMode;
 };
 
-const _services: Service[] = Object.entries(servicesConfig).map(([serviceKey, config]) => ({
-  serviceKey: serviceKey as ServiceKey,
-  publicPath: config.publicPath,
-  status: null,
-}));
+export const Services: FC = () => {
+  const services = useServices();
+  const [serviceKey, setServiceKey] = useState<ServiceKey | null>(null);
 
-const columns = [
-  {
-    title: 'Service key',
-    dataIndex: 'serviceKey',
-    key: 'serviceKey',
-  },
-  {
-    title: 'Public path',
-    dataIndex: 'publicPath',
-    key: 'publicPath',
-  },
-  {
-    title: 'Status',
-    dataIndex: 'status',
-    key: 'status',
-  },
-];
+  const columns = useMemo(() => [
+    {
+      title: 'Service key',
+      dataIndex: 'serviceKey',
+      key: 'serviceKey',
+    },
+    {
+      title: 'Public path',
+      dataIndex: 'publicPath',
+      key: 'publicPath',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+    },
+    {
+      title: 'Mode',
+      key: 'mode',
+      render: ({ mode }: Service) => (
+        mode
+          ? <>{mode}</>
+          : <Typography.Text type="secondary">unknown</Typography.Text>
+      ),
+    },
+    {
+      key: "tools",
+      render: ({ serviceKey }: Service) => (
+        <Button
+          type="link"
+          icon={<ApiOutlined />}
+          disabled={serviceKey === "controller"}
+          onClick={() => setServiceKey(serviceKey)}
+        />
+      ),
+    },
+  ], []);
 
-export const Services:FC = () => {
-  const [services, setServices] = useState<Service[]>(_services);
-
-  useEffect(() => {
-    getServicesState().then((servicesState) => {
-      setServices((services) => services.map((service) => {
-        const state = servicesState[service.serviceKey];
-        if (state) service.status = state.status;
-        return service;
-      }));
-    });
-  }, []);
-
-  const socket = useSocket("/", "/controller/socket");
-
-  useEffect(() => {
-    const run = (data: { serviceKey: ServiceKey }) => {
-      setServices((services) => services.map((service) => {
-        if (service.serviceKey === data.serviceKey) service.status = "run";
-        return service;
-      }));
-    };
-
-    const stopped = (data: { serviceKey: ServiceKey }) => {
-      setServices((services) => services.map((service) => {
-        if (service.serviceKey === data.serviceKey) service.status = "stopped";
-        return service;
-      }));
-    };
-
-    socket.on("services/run", run);
-    socket.on("services/stopped", stopped);
-
-    if (!socket.connected) socket.connect();
-
-    return () => {
-      socket.off("services/run", run);
-      socket.off("services/stopped", stopped);
-    }
-  }, [socket]);
-
-  return <Table rowKey="serviceKey" dataSource={services} columns={columns} />;
+  return (
+    <>
+      <Table rowKey="serviceKey" dataSource={services} columns={columns} />
+      <Drawer
+        closeIcon={false}
+        title={serviceKey && <ServiceToolsBar serviceKey={serviceKey} />}
+        visible={Boolean(serviceKey)} onClose={() => setServiceKey(null)}
+        width="70%"
+      >
+        {serviceKey && <ServiceTools serviceKey={serviceKey} />}
+      </Drawer>
+    </>
+  );
 };

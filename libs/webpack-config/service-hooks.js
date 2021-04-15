@@ -10,6 +10,8 @@ const { baseHooks } = require("./base-hooks");
 const hook = require("./hook");
 const servicesConfig = require("../../settings/services-config.json");
 
+const { SERVICE_MODE = "terminal" } = process.env;
+
 const entry = hook([], ({ context }) => [
   "core-js/stable",
   `./services/${context.serviceKey}/src/index`,
@@ -68,13 +70,16 @@ const plugins = hook(baseHooks.plugins(), async ({ value, context }) => [
 
 const controllerConfig = servicesConfig.controller;
 
-const runService = ({ serviceKey }) => {
+const onServiceRuned = ({ serviceKey }) => {
   return axios
-    .post(`${controllerConfig.publicPath}/api/services/run`, { serviceKey })
+    .post(`${controllerConfig.publicPath}/api/services/runed`, {
+      serviceKey,
+      mode: SERVICE_MODE,
+    })
     .catch(() => {});
 };
 
-const stopService = ({ serviceKey }) => {
+const onServiceStopped = ({ serviceKey }) => {
   let request = null;
 
   return () => {
@@ -94,10 +99,19 @@ const devServer = hook(baseHooks.devServer(), async ({ value, context }) => ({
   ...(await value),
   port: context.serviceConfig.port,
   publicPath: context.serviceConfig.publicPath,
-  after: () => {
-    runService({ serviceKey: context.serviceKey });
-    process.on("SIGHUP", stopService({ serviceKey: context.serviceKey }));
-    process.on("SIGINT", stopService({ serviceKey: context.serviceKey }));
+  after: (app) => {
+    app.get("/for-controller/api/service/mode", (_req, res) => {
+      res.send(SERVICE_MODE);
+      res.end();
+    });
+    app.post("/for-controller/api/service/stop", (_req, res) => {
+      process.kill(process.pid, "SIGINT");
+      res.status(200);
+      res.end();
+    });
+    onServiceRuned({ serviceKey: context.serviceKey });
+    process.on("SIGHUP", onServiceStopped({ serviceKey: context.serviceKey }));
+    process.on("SIGINT", onServiceStopped({ serviceKey: context.serviceKey }));
   },
   proxy: [
     {
