@@ -11,7 +11,7 @@ type Props = Omit<Parameters<typeof Lazy>[0], "src"> & {
 
 export const LazyWait: FC<Props> = (props) => {
   const { serviceKey, filename = "remote.js", ...lazyProps } = props;
-  const { status: serviceStatus } = useService(serviceKey);
+  const { status: serviceStatus } = useService(serviceKey, true);
   const config = servicesConfig[serviceKey];
   const [isInitService, setIsInitService] = useState<boolean>(false);
 
