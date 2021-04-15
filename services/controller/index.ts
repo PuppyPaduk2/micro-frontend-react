@@ -30,8 +30,7 @@ app.get("/api/services/config", (_req, res) => {
 });
 
 app.get("/api/services/config/:serviceKey", (req, res) => {
-  const { params } = req;
-  const { serviceKey } = params;
+  const { serviceKey } = req.params;
 
   if (typeof serviceKey === "string") {
     res.send(servicesConfig[serviceKey as ServiceKey] ?? null);
@@ -48,8 +47,7 @@ app.get("/api/services/state", (_req, res) => {
 });
 
 app.get("/api/services/state/:serviceKey", (req, res) => {
-  const { params } = req;
-  const { serviceKey } = params;
+  const { serviceKey } = req.params;
 
   if (typeof serviceKey === "string") {
     res.send(servicesState[serviceKey]);
@@ -60,30 +58,59 @@ app.get("/api/services/state/:serviceKey", (req, res) => {
   res.end();
 });
 
-// TODO Add proc by services
-let proc: childProcess.ChildProcessWithoutNullStreams;
+const processes: {
+  [key in ServiceKey]?: {
+    process: childProcess.ChildProcessWithoutNullStreams,
+    log: ArrayBuffer[];
+  }
+} = {};
 
-process.on("SIGHUP", () => {
-  if (proc) proc.kill("SIGINT");
-});
+const killProcess = (serviceKey: ServiceKey) => {
+  processes[serviceKey]?.process.kill("SIGINT");
+  delete processes[serviceKey];
+};
 
-process.on("SIGINT", () => {
-  if (proc) proc.kill("SIGINT");
+const killProcesses = () => {
+  Object.keys(processes).forEach((key) => killProcess(key as ServiceKey));
+};
+
+process.on("SIGHUP", killProcesses);
+
+process.on("SIGINT", killProcesses);
+
+app.get("/api/services/process/log", (req, res) => {
+  const { serviceKey } = req.query;
+  console.log(req.params);
+
+  if (serviceKey) {
+    res.send(processes[serviceKey as ServiceKey]?.log ?? []);
+  } else {
+    res.status(400);
+  }
+
+  res.end();
 });
 
 app.post("/api/services/run", (req, res) => {
   const { serviceKey }: { serviceKey: ServiceKey } = req.body;
 
-  if (serviceKey) {
-    proc = childProcess.spawn("npm", ["run", `start-service-${serviceKey}`], {
+  if (serviceKey && !processes[serviceKey]) {
+    const proc = childProcess.spawn("npm", ["run", `start-service-${serviceKey}`], {
       env: { ...process.env, SERVICE_MODE: "controller" },
     });
 
+    processes[serviceKey] = {
+      process: proc,
+      log: [],
+    };
+
     proc.stdout.on('data', (data) => {
+      processes[serviceKey]?.log.push(data);
       io.emit(`services/${serviceKey}/stdout`, { data });
     });
 
     proc.stderr.on('data', (data) => {
+      processes[serviceKey]?.log.push(data);
       io.emit(`services/${serviceKey}/stderr`, { data });
     });
   
@@ -127,6 +154,7 @@ app.post("/api/services/stop", (req, res) => {
   if (serviceKey) {
     const serviceConfig = servicesConfig[serviceKey];
 
+    killProcess(serviceKey);
     axios.post(`${serviceConfig.publicPath}/for-controller/api/service/stop`);
     res.status(200);
   } else {

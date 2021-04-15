@@ -19,3 +19,7 @@ export const stopService = (serviceKey: ServiceKey) => {
   return axios.post(`/controller/api/services/stop`, { serviceKey });
 };
 
+export const getServiceProcessLog = (serviceKey: ServiceKey) => {
+  return axios.get(`/controller/api/services/process/log`, { params: { serviceKey } })
+    .then<{ type: string, data: number[] }[]>(({ data }) => data);
+}
