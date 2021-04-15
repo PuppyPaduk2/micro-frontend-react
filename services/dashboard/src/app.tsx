@@ -1,5 +1,7 @@
 import { requestExpose } from 'libs/request-expose';
-import React, { useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
+import { Button, Input, Space } from "antd";
+import { useStateGlobal } from 'libs/hooks/use-state-global';
 
 export const App: React.FC = () => {
   useEffect(() => {
@@ -11,7 +13,23 @@ export const App: React.FC = () => {
 
   return (
     <div>
-      <div>Dashboard</div>
+      <div>Dashboard (ns: auth/form)</div>
+      <Form ns="auth/form" />
+      <div>Dashboard (ns: dashboard/form)</div>
+      <Form ns="dashboard/form" />
     </div>
+  );
+};
+
+const Form: FC<{ ns: string }> = ({ ns }) => {
+  const [login, setLogin] = useStateGlobal("", "login", ns);
+  const [pass, setPass] = useStateGlobal("", "password", ns);
+
+  return (
+    <Space direction="vertical">
+      <Input placeholder="Login" value={login} onChange={(event) => setLogin(event.currentTarget.value)} />
+      <Input placeholder="Password" type="password" value={pass} onChange={(event) => setPass(event.currentTarget.value)}  />
+      <Button block type="primary">Send</Button>
+    </Space>
   );
 };

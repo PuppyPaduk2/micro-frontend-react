@@ -63,6 +63,7 @@ const plugins = hook(baseHooks.plugins(), async ({ value, context }) => [
           antd: { singleton: true },
           "libs/socket": { singleton: true },
           "libs/dynamic-script": { singleton: true },
+          "libs/hooks/use-state-global": { singleton: true },
         },
       })
   ),

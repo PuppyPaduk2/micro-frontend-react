@@ -18,6 +18,7 @@ module.exports = webpackConfigService(
           antd: { singleton: true, eager: true },
           "libs/socket": { singleton: true, eager: true },
           "libs/dynamic-script": { singleton: true, eager: true },
+          "libs/hooks/use-state-global": { singleton: true, eager: true },
         },
       },
     ],

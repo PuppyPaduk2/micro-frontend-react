@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Emittery from 'emittery';
+import { v4 as uuid } from "uuid";
 
 type SetStateAction<S> = S | ((prevState: S) => S);
 
@@ -18,7 +19,7 @@ const SET_VALUE = "set-state";
 
 export const useStateGlobal = <T>(
   initialValue: T,
-  key: string,
+  key?: string,
   namespace?: string
 ): [T, (value: SetStateAction<T>) => void] => {
   const cell = useCell(initialValue, key, namespace);
@@ -47,15 +48,28 @@ export const useStateGlobal = <T>(
 
 const useCell = <T>(
   initialValue: T,
-  key: string,
+  key?: string,
   namespace?: string
 ): Cell<T> => {
+  const { key: innerKey, isCustomKey } = useKey(key);
   const space = useSpace(namespace);
 
+  useEffect(() => () => {
+    if (isCustomKey) delete space[innerKey];
+  }, [space, innerKey, isCustomKey])
+
   return useMemo(() => {
-    space[key] = space[key] || { emitter: new Emittery(), value: initialValue };
-    return space[key];
-  }, [space]);
+    space[innerKey] = space[innerKey] || { emitter: new Emittery(), value: initialValue };
+    return space[innerKey];
+  }, [space, innerKey]);
+};
+
+const useKey = (key?: string) => {
+  const keyRef = useRef({
+    key: key || uuid(),
+    isCustomKey: typeof key !== "string",
+  });
+  return keyRef.current;
 };
 
 const useSpace = (namespace: string = "__global"): Space => {
