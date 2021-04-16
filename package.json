@@ -10,7 +10,14 @@
     "start-service-core": "webpack serve -c ./webpack/service-core.js",
     "start-service-auth": "webpack serve -c ./webpack/service-auth.js",
     "start-service-dashboard": "webpack serve -c ./webpack/service-dashboard.js",
-    "start-service-users": "webpack serve -c ./webpack/service-users.js"
+    "start-service-users": "webpack serve -c ./webpack/service-users.js",
+
+    "build-service-controller": "webpack -c ./webpack/service-controller.js",
+    "build-service-admin": "webpack -c ./webpack/service-admin.js",
+    "build-service-core": "webpack -c ./webpack/service-core.js",
+    "build-service-auth": "webpack -c ./webpack/service-auth.js",
+    "build-service-dashboard": "webpack -c ./webpack/service-dashboard.js",
+    "build-service-users": "webpack -c ./webpack/service-users.js"
   },
   "repository": {
     "type": "git",
