@@ -8,7 +8,8 @@
     "start-service-admin": "webpack serve -c ./webpack/service-admin.js",
     "start-service-core": "webpack serve -c ./webpack/service-core.js",
     "start-service-auth": "webpack serve -c ./webpack/service-auth.js",
-    "start-service-dashboard": "webpack serve -c ./webpack/service-dashboard.js"
+    "start-service-dashboard": "webpack serve -c ./webpack/service-dashboard.js",
+    "start-service-users": "webpack serve -c ./webpack/service-users.js"
   },
   "repository": {
     "type": "git",

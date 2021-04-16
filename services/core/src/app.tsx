@@ -15,6 +15,7 @@ export const App: FC = () => {
     <Layout footer={<>@service/core</>}>
       <LazyWait serviceKey="auth" scope="auth" expose="./App" />
       <LazyWait serviceKey="dashboard" scope="dashboard" expose="./App" />
+      <LazyWait serviceKey="users" scope="users" expose="./App" />
     </Layout>
   );
 };
