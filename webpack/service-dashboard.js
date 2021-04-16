@@ -8,9 +8,9 @@ module.exports = webpackConfigService(
       {
         name: "dashboard",
         filename: "remote.js",
-        remotes: {
-          auth: "auth",
-        },
+        // remotes: {
+        //   auth: "auth",
+        // },
         exposes: {
           "./App": "./exposes/app.ts",
         },

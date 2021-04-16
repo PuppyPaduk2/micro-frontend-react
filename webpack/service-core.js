@@ -8,10 +8,11 @@ module.exports = webpackConfigService(
       {
         name: "core",
         filename: "remote.js",
-        remotes: {
-          auth: "auth",
-          dashboard: "dashboard",
-        },
+        // remotes: {
+        //   auth: "auth",
+        //   dashboard: "dashboard",
+        //   users: "users",
+        // },
         shared: {
           react: { singleton: true, eager: true, requiredVersion: "^17.0.1" },
           "react-dom": { singleton: true, eager: true },
