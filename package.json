@@ -4,6 +4,7 @@
   "description": "This repo show how use module federation plugin from webpack.",
   "main": "index.js",
   "scripts": {
+    "start-dev": "concurrently 'npm run start-service-controller' 'npm run start-service-admin'",
     "start-service-controller": "webpack -c ./webpack/service-controller.js --watch",
     "start-service-admin": "webpack serve -c ./webpack/service-admin.js",
     "start-service-core": "webpack serve -c ./webpack/service-core.js",
@@ -40,6 +41,7 @@
     "@types/socket.io-client": "^1.4.36",
     "@types/uuid": "^8.3.0",
     "babel-loader": "^8.2.2",
+    "concurrently": "^6.0.2",
     "core-js": "^3.10.1",
     "css-loader": "^5.2.1",
     "fork-ts-checker-webpack-plugin": "^6.2.1",
