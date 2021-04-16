@@ -24,7 +24,6 @@ export const ServiceToolsBar: FC<ToolsBarProps> = ({ serviceKey }) => {
         Run
       </Button>
       <Button
-        disabled={status === "stopped"}
         onClick={() => stopService(serviceKey)}
       >
         Stop
@@ -77,9 +76,12 @@ const Terminal: FC<TerminalProps> = ({ serviceKey }) => {
       if (code === 0) setLines([]);
     };
 
+    const onStopped = () => setLines([]);
+
     socket.on(`services/${serviceKey}/stdout`, addLines);
     socket.on(`services/${serviceKey}/stderr`, addLines);
     socket.on(`services/${serviceKey}/close`, onClose);
+    socket.on(`services/stopped`, onStopped);
 
     if (!socket.connected) socket.connect();
 
@@ -87,6 +89,7 @@ const Terminal: FC<TerminalProps> = ({ serviceKey }) => {
       socket.off(`services/${serviceKey}/stdout`, addLines);
       socket.off(`services/${serviceKey}/stderr`, addLines);
       socket.off(`services/${serviceKey}/close`, onClose);
+      socket.off(`services/stopped`, onStopped);
     };
   }, [socket, serviceKey, addLines]);
 

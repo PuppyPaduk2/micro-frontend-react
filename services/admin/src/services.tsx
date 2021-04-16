@@ -1,10 +1,11 @@
 import React, { FC, useMemo, useState } from "react";
-import { Button, Drawer, Table, Typography } from "antd";
+import { Button, Drawer, Space, Table, Typography } from "antd";
 import { ServiceKey, ServiceMode, ServiceStatus } from "libs/types";
-import { ApiOutlined } from "@ant-design/icons";
+import { ApiOutlined, PlayCircleOutlined, StopOutlined } from "@ant-design/icons";
 
 import { ServiceTools, ServiceToolsBar } from "./service-tools";
 import { useServices } from "libs/hooks/use-services";
+import { runService, stopService } from "api/controller";
 
 type Service = {
   serviceKey: ServiceKey;
@@ -43,14 +44,29 @@ export const Services: FC = () => {
       ),
     },
     {
+      title: "Actions",
       key: "tools",
-      render: ({ serviceKey }: Service) => (
-        <Button
-          type="link"
-          icon={<ApiOutlined />}
-          disabled={serviceKey === "controller"}
-          onClick={() => setServiceKey(serviceKey)}
-        />
+      render: ({ serviceKey, status }: Service) => (
+        <Space>
+          <Button
+            type="link"
+            icon={<PlayCircleOutlined />}
+            disabled={serviceKey === "controller" || status === "run"}
+            onClick={() => runService(serviceKey)}
+          />
+          <Button
+            type="link"
+            icon={<StopOutlined />}
+            disabled={serviceKey === "controller"}
+            onClick={() => stopService(serviceKey)}
+          />
+          <Button
+            type="link"
+            icon={<ApiOutlined />}
+            disabled={serviceKey === "controller"}
+            onClick={() => setServiceKey(serviceKey)}
+          />
+        </Space>
       ),
     },
   ], []);

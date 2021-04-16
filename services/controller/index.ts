@@ -68,6 +68,8 @@ const processes: {
 const killProcess = (serviceKey: ServiceKey) => {
   processes[serviceKey]?.process.kill("SIGINT");
   delete processes[serviceKey];
+  console.log("kill-process", { serviceKey });
+  io.emit("services/stopped", { serviceKey });
 };
 
 const killProcesses = () => {
@@ -80,7 +82,6 @@ process.on("SIGINT", killProcesses);
 
 app.get("/api/services/process/log", (req, res) => {
   const { serviceKey } = req.query;
-  console.log(req.params);
 
   if (serviceKey) {
     res.send(processes[serviceKey as ServiceKey]?.log ?? []);
@@ -154,8 +155,9 @@ app.post("/api/services/stop", (req, res) => {
   if (serviceKey) {
     const serviceConfig = servicesConfig[serviceKey];
 
-    killProcess(serviceKey);
-    axios.post(`${serviceConfig.publicPath}/for-controller/api/service/stop`);
+    axios.post(`${serviceConfig.publicPath}/for-controller/api/service/stop`)
+      .catch(() => {})
+      .finally(() => killProcess(serviceKey));
     res.status(200);
   } else {
     res.status(400);
@@ -170,15 +172,11 @@ app.post("/api/services/stopped", (req, res) => {
   const { serviceKey }: { serviceKey: ServiceKey } = req.body;
 
   if (serviceKey) {
-    // const serviceConfig = servicesConfig[serviceKey];
-
     servicesState[serviceKey] = {
       ...servicesState[serviceKey],
       status: "stopped",
       mode: null,
     };
-    io.emit("services/stopped", { serviceKey });
-    // axios.get(`${serviceConfig.publicPath}/for-controller/api/service/stop`);
     res.status(200);
   } else {
     res.status(400);
