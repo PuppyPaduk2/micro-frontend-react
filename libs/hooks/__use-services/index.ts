@@ -1,5 +1,5 @@
 import { getServicesState } from "api/controller";
-import { ServiceKey, ServiceMode, ServiceStatus } from "libs/types";
+import { ServiceKey, ServicePlaceOfStart, ServiceStatus } from "libs/types";
 import { useCallback, useEffect, useState } from "react";
 import servicesConfig from "settings/services-config.json";
 import { DataRun, DataStopped, useServicesRunStopped } from "../use-services-run-stopped";
@@ -8,7 +8,7 @@ export type Service = {
   serviceKey: ServiceKey;
   publicPath: string,
   status: ServiceStatus | null;
-  mode: ServiceMode;
+  mode: ServicePlaceOfStart;
 };
 
 const defServices: Service[] = Object.entries(servicesConfig).map(([serviceKey, config]) => ({
@@ -27,7 +27,7 @@ export const useServices = (): Service[] => {
         const state = servicesState[service.serviceKey];
         if (state) {
           service.status = state.status;
-          service.mode = state.mode;
+          service.mode = state.placeOfStart;
         }
         return service;
       }));

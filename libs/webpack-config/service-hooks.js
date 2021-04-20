@@ -10,7 +10,7 @@ const { baseHooks } = require("./base-hooks");
 const hook = require("./hook");
 const servicesConfig = require("../../settings/services-config.json");
 
-const { SERVICE_MODE = "terminal" } = process.env;
+const { PLACE_OF_START = "terminal" } = process.env;
 
 const entry = hook([], ({ context }) => [
   "core-js/stable",
@@ -27,7 +27,7 @@ const resolve = hook(baseHooks.resolve(), async ({ value, context }) => ({
 
 const output = hook(baseHooks.output(), async ({ value, context }) => ({
   ...(await value),
-  publicPath: `${context.serviceConfig.publicPath}/`,
+  publicPath: `${servicesConfig[context.serviceKey].publicPath}/`,
 }));
 
 const plugins = hook(baseHooks.plugins(), async ({ value, context }) => [
@@ -69,50 +69,42 @@ const plugins = hook(baseHooks.plugins(), async ({ value, context }) => [
   ),
 ]);
 
-const controllerConfig = servicesConfig.controller;
-
-const onServiceRuned = ({ serviceKey }) => {
-  return axios
-    .post(`${controllerConfig.publicPath}/api/services/runed`, {
-      serviceKey,
-      mode: SERVICE_MODE,
-    })
-    .catch(() => {});
-};
-
-const onServiceStopped = ({ serviceKey }) => {
-  let request = null;
-
-  return () => {
-    if (!request) {
-      request = axios
-        .post(`${controllerConfig.publicPath}/api/services/stopped`, {
-          serviceKey,
-        })
-        .finally(() => process.exit(0));
-    }
-
-    return request;
-  };
-};
-
 const devServer = hook(baseHooks.devServer(), async ({ value, context }) => ({
   ...(await value),
-  port: context.serviceConfig.port,
-  publicPath: context.serviceConfig.publicPath,
+  port: servicesConfig[context.serviceKey].port,
+  publicPath: servicesConfig[context.serviceKey].publicPath,
   after: (app) => {
-    app.get("/for-controller/api/service/mode", (_req, res) => {
-      res.send(SERVICE_MODE);
+    app.get("/for-controller/api/service/place-of-start", (_req, res) => {
+      res.send(PLACE_OF_START);
       res.end();
     });
+
     app.post("/for-controller/api/service/stop", (_req, res) => {
       process.kill(process.pid, "SIGINT");
       res.status(200);
       res.end();
     });
-    onServiceRuned({ serviceKey: context.serviceKey });
-    process.on("SIGHUP", onServiceStopped({ serviceKey: context.serviceKey }));
-    process.on("SIGINT", onServiceStopped({ serviceKey: context.serviceKey }));
+
+    axios
+      .post(
+        `${servicesConfig.controller.publicPath}/api/service/${context.serviceKey}/started`,
+        { placeOfStart: PLACE_OF_START }
+      )
+      .catch(() => {});
+
+    let request = null;
+    const onServiceStopped = () => {
+      if (!request) {
+        request = axios
+          .post(
+            `${servicesConfig.controller.publicPath}/api/service/${context.serviceKey}/stopped`
+          )
+          .finally(() => process.exit(0));
+      }
+    };
+
+    process.on("SIGHUP", onServiceStopped);
+    process.on("SIGINT", onServiceStopped);
   },
   proxy: [
     {
@@ -120,17 +112,17 @@ const devServer = hook(baseHooks.devServer(), async ({ value, context }) => ({
       pathRewrite: { "^/controller": "/" },
       changeOrigin: true,
       cookieDomainRewrite: "localhost",
-      target: `http://${controllerConfig.host}`,
+      target: `http://${servicesConfig.controller.host}`,
       secure: false,
     },
     {
       context: ["/controller/socket"],
       pathRewrite: { "^/controller": "/" },
-      target: `ws://${controllerConfig.host}`,
+      target: `ws://${servicesConfig.controller.host}`,
       ws: true,
       secure: false,
     },
-    ...Object.entries(context.servicesConfig).map(([key, { publicPath }]) => ({
+    ...Object.entries(servicesConfig).map(([key, { publicPath }]) => ({
       context: [`/${key}`],
       pathRewrite: { [`^/${key}`]: "" },
       changeOrigin: true,

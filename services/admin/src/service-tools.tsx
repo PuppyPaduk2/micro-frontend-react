@@ -1,8 +1,7 @@
 import { Button, Space, Tag } from "antd";
-import { stopService, runService, getServiceProcessLog } from "api/controller";
+import { stopService, startService, getServiceProcessLog, onSocket, offSocket } from "api/controller";
 import { useStateGlobal } from "libs/hooks/use-state-global";
 import { useService } from "libs/hooks/use-service";
-import { useSocket } from "libs/hooks/use-socket";
 import { ServiceKey } from "libs/types";
 import React, { FC, useCallback, useEffect } from "react";
 
@@ -11,15 +10,17 @@ type ToolsBarProps = {
 };
 
 export const ServiceToolsBar: FC<ToolsBarProps> = ({ serviceKey }) => {
-  const { status, mode } = useService(serviceKey);
+  const { status, placeOfStart } = useService(serviceKey);
 
   return (
     <Space>
       <div>Service tools</div>
       <Tag color="blue">{serviceKey}</Tag>
+      <Tag>Status: {status}</Tag>
+      {placeOfStart && <Tag>Place of start: {placeOfStart}</Tag>}
       <Button
         disabled={status === "run"}
-        onClick={() => runService(serviceKey)}
+        onClick={() => startService(serviceKey)}
       >
         Run
       </Button>
@@ -28,8 +29,6 @@ export const ServiceToolsBar: FC<ToolsBarProps> = ({ serviceKey }) => {
       >
         Stop
       </Button>
-      <Tag>Status: {status}</Tag>
-      {mode && <Tag>Mode: {mode}</Tag>}
     </Space>
   );
 };
@@ -51,7 +50,6 @@ type TerminalProps = {
 };
 
 const Terminal: FC<TerminalProps> = ({ serviceKey }) => {
-  const socket = useSocket("/", "/controller/socket");
   const [isInit, setIsInit] = useStateGlobal<boolean>(false, `terminal-is-init/${serviceKey}`);
   const [lines, setLines] = useStateGlobal<string[]>([], `terminal-lines/${serviceKey}`);
 
@@ -75,23 +73,17 @@ const Terminal: FC<TerminalProps> = ({ serviceKey }) => {
     const onClose = ({ code }: { code: number | null }) => {
       if (code === 0) setLines([]);
     };
-
-    const onStopped = () => setLines([]);
-
-    socket.on(`services/${serviceKey}/stdout`, addLines);
-    socket.on(`services/${serviceKey}/stderr`, addLines);
-    socket.on(`services/${serviceKey}/close`, onClose);
-    socket.on(`services/stopped`, onStopped);
-
-    if (!socket.connected) socket.connect();
+  
+    onSocket.serviceProcessStdout(serviceKey, addLines);
+    onSocket.serviceProcessStderr(serviceKey, addLines);
+    onSocket.serviceProcessClose(serviceKey, onClose);
 
     return () => {
-      socket.off(`services/${serviceKey}/stdout`, addLines);
-      socket.off(`services/${serviceKey}/stderr`, addLines);
-      socket.off(`services/${serviceKey}/close`, onClose);
-      socket.off(`services/stopped`, onStopped);
+      offSocket.serviceProcessStdout(serviceKey, addLines);
+      offSocket.serviceProcessStderr(serviceKey, addLines);
+      offSocket.serviceProcessClose(serviceKey, onClose);
     };
-  }, [socket, serviceKey, addLines]);
+  }, [serviceKey]);
 
   return (
     <div>

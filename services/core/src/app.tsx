@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { Layout } from "libs/components/layout";
-import { LazyWait } from "libs/components/lazy-wait";
+import { Lazy } from "libs/components/lazy";
 import { requestExpose } from "libs/request-expose";
 
 export const App: FC = () => {
@@ -13,9 +13,9 @@ export const App: FC = () => {
 
   return (
     <Layout footer={<>@service/core</>}>
-      <LazyWait serviceKey="auth" scope="auth" expose="./App" />
-      <LazyWait serviceKey="dashboard" scope="dashboard" expose="./App" />
-      <LazyWait serviceKey="users" scope="users" expose="./App" />
+      <Lazy serviceKey="auth" scope="auth" expose="./App" />
+      <Lazy serviceKey="dashboard" scope="dashboard" expose="./App" />
+      <Lazy serviceKey="users" scope="users" expose="./App" />
     </Layout>
   );
 };

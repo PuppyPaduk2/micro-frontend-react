@@ -1,21 +1,61 @@
 import React, { FC, useMemo, useState } from "react";
 import { Button, Drawer, Space, Table, Typography } from "antd";
-import { ServiceKey, ServiceMode, ServiceStatus } from "libs/types";
+import { ServiceConfigWithKey, ServiceKey } from "libs/types";
 import { ApiOutlined, PlayCircleOutlined, StopOutlined } from "@ant-design/icons";
+import servicesConfig from "settings/services-config.json"
 
 import { ServiceTools, ServiceToolsBar } from "./service-tools";
-import { useServices } from "libs/hooks/use-services";
-import { runService, stopService } from "api/controller";
+import { startService, stopService } from "api/controller";
+import { useService } from "libs/hooks/use-service";
 
-type Service = {
-  serviceKey: ServiceKey;
-  publicPath: string,
-  status: ServiceStatus | null;
-  mode: ServiceMode;
+const defServices: ServiceConfigWithKey[] = Object.entries(servicesConfig).map(([serviceKey, config]) => ({
+  ...config,
+  serviceKey: serviceKey as ServiceKey,
+}));
+
+const Status: FC<ServiceConfigWithKey> = ({ serviceKey }) => {
+  const { status } = useService(serviceKey);
+
+  return status
+    ? <>{status}</>
+    : <Typography.Text type="secondary">unknown</Typography.Text>
+};
+
+const PlaceOfStart: FC<ServiceConfigWithKey> = ({ serviceKey }) => {
+  const { placeOfStart } = useService(serviceKey);
+
+  return placeOfStart
+    ? <>{placeOfStart}</>
+    : <Typography.Text type="secondary">unknown</Typography.Text>
+};
+
+const Actions: FC<ServiceConfigWithKey & { onOpenTools?: (serviceKey: ServiceKey) => void }> = ({ serviceKey, onOpenTools = () => {} }) => {
+  return (
+    <Space>
+      <Button
+        type="link"
+        icon={<PlayCircleOutlined />}
+        disabled={serviceKey === "controller"}
+        onClick={() => startService(serviceKey)}
+      />
+      <Button
+        type="link"
+        icon={<StopOutlined />}
+        disabled={serviceKey === "controller"}
+        onClick={() => stopService(serviceKey)}
+      />
+      <Button
+        type="link"
+        icon={<ApiOutlined />}
+        disabled={serviceKey === "controller"}
+        onClick={() => onOpenTools(serviceKey)}
+      />
+    </Space>
+  );
 };
 
 export const Services: FC = () => {
-  const services = useServices();
+  const [services] = useState<ServiceConfigWithKey[]>(defServices);
   const [serviceKey, setServiceKey] = useState<ServiceKey | null>(null);
 
   const columns = useMemo(() => [
@@ -31,43 +71,18 @@ export const Services: FC = () => {
     },
     {
       title: 'Status',
-      dataIndex: 'status',
       key: 'status',
+      render: Status,
     },
     {
-      title: 'Mode',
-      key: 'mode',
-      render: ({ mode }: Service) => (
-        mode
-          ? <>{mode}</>
-          : <Typography.Text type="secondary">unknown</Typography.Text>
-      ),
+      title: 'Place of start',
+      key: 'placeOfStart',
+      render: PlaceOfStart,
     },
     {
       title: "Actions",
       key: "tools",
-      render: ({ serviceKey, status }: Service) => (
-        <Space>
-          <Button
-            type="link"
-            icon={<PlayCircleOutlined />}
-            disabled={serviceKey === "controller" || status === "run"}
-            onClick={() => runService(serviceKey)}
-          />
-          <Button
-            type="link"
-            icon={<StopOutlined />}
-            disabled={serviceKey === "controller"}
-            onClick={() => stopService(serviceKey)}
-          />
-          <Button
-            type="link"
-            icon={<ApiOutlined />}
-            disabled={serviceKey === "controller"}
-            onClick={() => setServiceKey(serviceKey)}
-          />
-        </Space>
-      ),
+      render: (record: ServiceConfigWithKey) => <Actions {...record} onOpenTools={setServiceKey} />,
     },
   ], []);
 

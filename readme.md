@@ -2,23 +2,12 @@
 
 This repo show how use module federation plugin from webpack.
 
-## Install
+## Quick start
 
 ```sh
-cd ~/
-git clone git@github.com:EvgenyiFedotov/micro-frontend-react.git
-cd ~/micro-frontend-react/app
+git clone https://github.com/EvgenyiFedotov/micro-frontend-react --recursive
+cd ./micro-frontend-react
+git submodule foreach 'git checkout master'
 npm install
-npm start
-
-# Open second terminal
-cd ~/micro-frontend-react/services/dashboard
-npm install
-npm start
-
-# Open third terminal
-cd ~/micro-frontend-react/services/sign-in
-npm install
-npm start
-
+npm run start-dev
 ```

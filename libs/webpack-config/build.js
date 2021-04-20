@@ -4,12 +4,11 @@ module.exports = (configHooks = {}, context = {}) => async (
 ) => {
   const entries = Object.entries(configHooks);
   const result = {};
+  innerContext =
+    innerContext instanceof Function ? await innerContext() : innerContext;
   const combinedContext = {
-    ...(context instanceof Function
-      ? await context(
-          innerContext instanceof Function ? await innerContext() : innerContext
-        )
-      : context),
+    ...(context instanceof Function ? await context(innerContext) : context),
+    ...innerContext,
   };
 
   for (let index = 0; index < entries.length; index += 1) {

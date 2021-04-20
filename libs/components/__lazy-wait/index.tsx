@@ -11,7 +11,7 @@ type Props = Omit<Parameters<typeof Lazy>[0], "src"> & {
 
 export const LazyWait: FC<Props> = (props) => {
   const { serviceKey, filename = "remote.js", ...lazyProps } = props;
-  const { status: serviceStatus } = useService(serviceKey, true);
+  const { status: serviceStatus } = useService(serviceKey);
   const config = servicesConfig[serviceKey];
   const [isInitService, setIsInitService] = useState<boolean>(false);
 
@@ -20,19 +20,19 @@ export const LazyWait: FC<Props> = (props) => {
   }, [serviceStatus]);
 
   if (config && isInitService) {
-    return (
-      <Lazy
-        src={`${config.publicPath}/${filename}`}
-        scope={lazyProps.scope}
-        expose={lazyProps.expose}
-        pending={lazyProps.pending}
-        failed={lazyProps.failed}
-        fallback={lazyProps.fallback}
-        errorTitle={lazyProps.errorTitle}
-      >
-        {lazyProps.children}
-      </Lazy>
-    );
+    // return (
+    //   <Lazy
+    //     src={`${config.publicPath}/${filename}`}
+    //     scope={lazyProps.scope}
+    //     expose={lazyProps.expose}
+    //     pending={lazyProps.pending}
+    //     failed={lazyProps.failed}
+    //     fallback={lazyProps.fallback}
+    //     errorTitle={lazyProps.errorTitle}
+    //   >
+    //     {lazyProps.children}
+    //   </Lazy>
+    // );
   }
 
   return <></>;

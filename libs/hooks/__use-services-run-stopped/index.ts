@@ -1,10 +1,10 @@
-import { ServiceKey, ServiceMode } from "libs/types";
+import { ServiceKey, ServicePlaceOfStart } from "libs/types";
 import { useEffect } from "react";
 import { useSocket } from "libs/hooks/use-socket";
 
 export type DataRun = {
-  serviceKey: ServiceKey,
-  mode: ServiceMode
+  serviceKey: ServiceKey;
+  mode: ServicePlaceOfStart;
 };
 
 export type DataStopped = {
@@ -22,7 +22,6 @@ export const useServicesRunStopped = ({ onRun, onStopped }: Props) => {
   useEffect(() => {
     if (onRun) socket.on("services/run", onRun);
     if (onStopped) socket.on("services/stopped", onStopped);
-    if (!socket.connected) socket.connect();
 
     return () => {
       if (onRun) socket.off("services/run", onRun);

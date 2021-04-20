@@ -1,12 +1,13 @@
-import servicesConfig from 'settings/services-config.json'
+import servicesConfig from "settings/services-config.json";
+import { ChildProcessWithoutNullStreams } from "child_process";
 
 export type ServiceStatus = "stopped" | "run";
 
-export type ServiceMode = "terminal" | "controller" | null;
+export type ServicePlaceOfStart = "terminal" | "controller" | null;
 
 export type ServiceState = {
   status: ServiceStatus;
-  mode: ServiceMode;
+  placeOfStart: ServicePlaceOfStart;
 };
 
 export type ServicesConfig = typeof servicesConfig;
@@ -17,4 +18,13 @@ export type ServiceConfig = {
   port: number;
   host: string;
   publicPath: string;
+};
+
+export type ServiceConfigWithKey = ServiceConfig & {
+  serviceKey: ServiceKey;
+};
+
+export type ServiceProcess = {
+  instance: ChildProcessWithoutNullStreams;
+  logs: ArrayBuffer[];
 };
