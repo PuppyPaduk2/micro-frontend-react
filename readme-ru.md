@@ -12,6 +12,16 @@ npm install
 npm run start-dev
 ```
 
+### Быстрый запуск с корректным состоянием root-приложения для micro-приложения (users)
+
+```sh
+git clone https://github.com/EvgenyiFedotov/micro-frontend-react --recursive -b service/users
+cd ./micro-frontend-react
+git submodule foreach 'git checkout service/users'
+npm install
+npm run start-dev
+```
+
 ## Работа с git
 
 ## Добавление нового сервиса (микрофронтенда)
