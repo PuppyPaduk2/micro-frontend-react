@@ -6,19 +6,19 @@
   "scripts": {
     "start-dev": "concurrently 'npm:start-service-*'",
     "start-dev-admin": "concurrently 'npm run start-service-controller' 'npm run start-service-admin'",
-    "start-service-controller": "webpack -c ./webpack/service-controller.js --watch",
-    "start-service-admin": "webpack serve -c ./webpack/service-admin.js",
-    "start-service-core": "webpack serve -c ./webpack/service-core.js",
-    "start-service-auth": "webpack serve -c ./webpack/service-auth.js",
-    "start-service-dashboard": "webpack serve -c ./webpack/service-dashboard.js",
-    "start-service-users": "webpack serve -c ./webpack/service-users.js",
+    "start-service-controller": "SERVICE_KEY=controller webpack -c ./webpack/service-controller.js --watch",
+    "start-service-admin": "SERVICE_KEY=admin webpack serve -c ./webpack/service-admin.js",
+    "start-service-core": "SERVICE_KEY=core webpack serve -c ./webpack/service-core.js",
+    "start-service-auth": "SERVICE_KEY=auth webpack serve -c ./webpack/service-auth.js",
+    "start-service-dashboard": "SERVICE_KEY=dashboard webpack serve -c ./webpack/service-dashboard.js",
+    "start-service-users": "SERVICE_KEY=users webpack serve -c ./webpack/service-users.js",
 
-    "build-service-controller": "webpack -c ./webpack/service-controller.js",
-    "build-service-admin": "webpack -c ./webpack/service-admin.js",
-    "build-service-core": "webpack -c ./webpack/service-core.js",
-    "build-service-auth": "webpack -c ./webpack/service-auth.js",
-    "build-service-dashboard": "webpack -c ./webpack/service-dashboard.js",
-    "build-service-users": "webpack -c ./webpack/service-users.js"
+    "build-service-controller": "SERVICE_KEY=controller webpack -c ./webpack/service-controller.js",
+    "build-service-admin": "SERVICE_KEY=admin webpack -c ./webpack/service-admin.js",
+    "build-service-core": "SERVICE_KEY=core webpack -c ./webpack/service-core.js",
+    "build-service-auth": "SERVICE_KEY=auth webpack -c ./webpack/service-auth.js",
+    "build-service-dashboard": "SERVICE_KEY=dashboard webpack -c ./webpack/service-dashboard.js",
+    "build-service-users": "SERVICE_KEY=users webpack -c ./webpack/service-users.js"
   },
   "repository": {
     "type": "git",

@@ -36,9 +36,10 @@ const servicesProcesses: { [Key in ServiceKey]?: ServiceProcess } = {};
 const onServiceStart = (serviceKey: ServiceKey) => {
   if (!servicesProcesses[serviceKey]) {
     const instance = childProcess.spawn("npm", ["run", `start-service-${serviceKey}`], {
-      env: { ...process.env, SERVICE_MODE: "controller" },
+      env: { ...process.env, PLACE_OF_START: "controller" },
     });
 
+    console.log(serviceKey, servicesProcesses[serviceKey])
     servicesProcesses[serviceKey] = { instance, logs: [] };
 
     instance.stdout.on('data', (data) => {

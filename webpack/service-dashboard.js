@@ -1,20 +1,15 @@
-const webpackConfigService = require("../libs/webpack-config/service");
+const serviceSettings = require("../libs/webpack-config/service-settings");
+const { shared, createMf } = require("../libs/webpack-config/service-mf");
 
-module.exports = webpackConfigService(
-  {},
-  {
-    serviceKey: "dashboard",
-    modulesFederation: [
-      {
-        name: "dashboard",
-        filename: "remote.js",
-        // remotes: {
-        //   auth: "auth",
-        // },
-        exposes: {
-          "./App": "./exposes/app.ts",
-        },
+module.exports = {
+  ...serviceSettings,
+  plugins: [
+    ...serviceSettings.plugins,
+    createMf({
+      name: "dashboard",
+      exposes: {
+        "./App": "./exposes/app.ts",
       },
-    ],
-  }
-);
+    }),
+  ],
+};

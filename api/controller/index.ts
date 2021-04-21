@@ -43,7 +43,7 @@ export const onSocket = {
     getSocket().on(`service/${serviceKey}/process/stdout`, callback);
   },
   serviceProcessStderr: (serviceKey: ServiceKey, callback: (payload: { data: ArrayBuffer }) => void) => {
-    getSocket().on(`service/${serviceKey}/process/stdout`, callback);
+    getSocket().on(`service/${serviceKey}/process/stderr`, callback);
   },
   serviceProcessClose: (serviceKey: ServiceKey, callback: (payload: { code: number }) => void) => {
     getSocket().on(`service/${serviceKey}/process/close`, callback);
@@ -64,7 +64,7 @@ export const offSocket = {
     getSocket().off(`service/${serviceKey}/process/stdout`, callback);
   },
   serviceProcessStderr: (serviceKey: ServiceKey, callback: (payload: { data: ArrayBuffer }) => void) => {
-    getSocket().off(`service/${serviceKey}/process/stdout`, callback);
+    getSocket().off(`service/${serviceKey}/process/stderr`, callback);
   },
   serviceProcessClose: (serviceKey: ServiceKey, callback: (payload: { code: number }) => void) => {
     getSocket().off(`service/${serviceKey}/process/close`, callback);

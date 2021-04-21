@@ -40,15 +40,17 @@ export const createScript = (src: string) => {
       return loadPromise;
     },
     remove: () => {
-      console.log(`Dynamic Script Removed: ${src}`);
-      const element = document.createElement("script");
-      element.src = src;
-      element.type = "text/javascript";
-      element.async = true;
-      scripts[src].element = element;
-      scripts[src].loaded = false;
-      scripts[src].failed = false;
-      scripts[src].loadPromise = null;
+      if (scripts[src].loadPromise) {
+        console.log(`Dynamic Script Removed: ${src}`);
+        const element = document.createElement("script");
+        element.src = src;
+        element.type = "text/javascript";
+        element.async = true;
+        scripts[src].element = element;
+        scripts[src].loaded = false;
+        scripts[src].failed = false;
+        scripts[src].loadPromise = null;
+      }
     },
   };
 

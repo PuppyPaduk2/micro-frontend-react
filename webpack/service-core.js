@@ -1,27 +1,18 @@
-const webpackConfigService = require("../libs/webpack-config/service");
+const serviceSettings = require("../libs/webpack-config/service-settings");
+const { shared, createMf } = require("../libs/webpack-config/service-mf");
 
-module.exports = webpackConfigService(
-  {},
-  {
-    serviceKey: "core",
-    modulesFederation: [
-      {
-        name: "core",
-        filename: "remote.js",
-        // remotes: {
-        //   auth: "auth",
-        //   dashboard: "dashboard",
-        //   users: "users",
-        // },
-        shared: {
-          react: { singleton: true, eager: true, requiredVersion: "^17.0.1" },
-          "react-dom": { singleton: true, eager: true },
-          antd: { singleton: true, eager: true },
-          "libs/socket": { singleton: true, eager: true },
-          "libs/dynamic-script": { singleton: true, eager: true },
-          "libs/hooks/use-state-global": { singleton: true, eager: true },
-        },
-      },
-    ],
-  }
-);
+module.exports = {
+  ...serviceSettings,
+  plugins: [
+    ...serviceSettings.plugins,
+    createMf({
+      name: "core",
+      shared: Object.entries(shared).reduce((memo, [key, config]) => {
+        const next = { ...config };
+        next.eager = true;
+        if (key === "react") next.requiredVersion = "^17.0.1";
+        return { ...memo, [key]: next };
+      }, {}),
+    }),
+  ],
+};

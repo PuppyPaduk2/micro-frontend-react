@@ -1,18 +1,16 @@
-const webpackConfigService = require("../libs/webpack-config/service");
+const serviceSettings = require("../libs/webpack-config/service-settings");
+const { shared, createMf } = require("../libs/webpack-config/service-mf");
 
-module.exports = webpackConfigService(
-  {},
-  {
-    serviceKey: "auth",
-    modulesFederation: [
-      {
-        name: "auth",
-        filename: "remote.js",
-        exposes: {
-          "./App": "./exposes/app.ts",
-          "./guard": "./exposes/guard.ts",
-        },
+module.exports = {
+  ...serviceSettings,
+  plugins: [
+    ...serviceSettings.plugins,
+    createMf({
+      name: "auth",
+      exposes: {
+        "./App": "./exposes/app.ts",
+        "./guard": "./exposes/guard.ts",
       },
-    ],
-  }
-);
+    }),
+  ],
+};

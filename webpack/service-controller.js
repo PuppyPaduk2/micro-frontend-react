@@ -3,24 +3,17 @@ const NodeExternals = require("webpack-node-externals");
 const NodemonPlugin = require("nodemon-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
-const webpackConfig = require("../libs/webpack-config");
+const serviceSettings = require("../libs/webpack-config/service-settings");
 
-module.exports = webpackConfig({
-  entry: () => "./services/controller/index.ts",
-  resolve: ({ value }) => ({
-    ...value,
-    modules: [
-      path.resolve(process.cwd(), "./services/controller"),
-      path.resolve(process.cwd(), "./node_modules"),
-    ],
-  }),
-  target: () => "node",
-  externals: () => [NodeExternals()],
-  plugins: () => [
+module.exports = {
+  ...serviceSettings,
+  target: "node",
+  externals: [NodeExternals()],
+  plugins: [
     new ForkTsCheckerWebpackPlugin({
       typescript: {
         configOverwrite: {
-          include: [`./services/controller/index.*`],
+          include: [`./services/controller/src/index.*`],
         },
       },
     }),
@@ -30,5 +23,5 @@ module.exports = webpackConfig({
       ext: "js,njk,json,ts,tsx",
     }),
   ],
-  devServer: () => undefined,
-});
+  devServer: undefined,
+};

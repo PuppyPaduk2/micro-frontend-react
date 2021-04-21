@@ -16,19 +16,21 @@ export const ServiceToolsBar: FC<ToolsBarProps> = ({ serviceKey }) => {
     <Space>
       <div>Service tools</div>
       <Tag color="blue">{serviceKey}</Tag>
-      <Tag>Status: {status}</Tag>
-      {placeOfStart && <Tag>Place of start: {placeOfStart}</Tag>}
       <Button
+        size="small"
         disabled={status === "run"}
         onClick={() => startService(serviceKey)}
       >
         Run
       </Button>
       <Button
+        size="small"
         onClick={() => stopService(serviceKey)}
       >
         Stop
       </Button>
+      <Tag>Status: {status}</Tag>
+      {placeOfStart && <Tag>Place of start: {placeOfStart}</Tag>}
     </Space>
   );
 };
@@ -73,7 +75,7 @@ const Terminal: FC<TerminalProps> = ({ serviceKey }) => {
     const onClose = ({ code }: { code: number | null }) => {
       if (code === 0) setLines([]);
     };
-  
+
     onSocket.serviceProcessStdout(serviceKey, addLines);
     onSocket.serviceProcessStderr(serviceKey, addLines);
     onSocket.serviceProcessClose(serviceKey, onClose);

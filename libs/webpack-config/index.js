@@ -1,7 +1,9 @@
-const path = require("path");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const baseSettings = require("./base-settings");
+const serviceSettings = require("./service-settings");
+const serviceMf = require("./service-mf");
 
-const { baseHooks } = require("./base-hooks");
-const build = require("./build");
-
-module.exports = build(baseHooks);
+module.exports = {
+  baseSettings,
+  serviceSettings,
+  serviceMf,
+};

@@ -90,7 +90,6 @@ export const Services: FC = () => {
     <>
       <Table rowKey="serviceKey" dataSource={services} columns={columns} />
       <Drawer
-        closeIcon={false}
         title={serviceKey && <ServiceToolsBar serviceKey={serviceKey} />}
         visible={Boolean(serviceKey)} onClose={() => setServiceKey(null)}
         width="70%"

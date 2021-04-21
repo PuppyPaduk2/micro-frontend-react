@@ -10,20 +10,22 @@ export const loadScriptRemote = (payload: {
   onFailed?: () => void;
   filename?: string,
 }) => {
-  const { serviceKey, onFailed = () => {} } = payload;
+  const { serviceKey, onLoaded = () => {} } = payload;
 
-  return new Promise((resolve, reject) => {
+  // TODO Загрузка скрипта после быстрого включения / выключения
+  return new Promise<void>((resolve) => {
     getServiceState(serviceKey)
       .then(({ status }) => {
         if (status === "run") {
-          loadScript(payload).then(resolve).catch(reject).catch(onFailed);
+          loadScript(payload).then(resolve)
         } else {
-          const onStarted = () => {
-            loadScript(payload).then(resolve).catch(reject).catch(onFailed);
-            offSocket.serviceStarted(serviceKey, onStarted);
-          };
-
-          onSocket.serviceStarted(serviceKey, onStarted);
+          onServiceStarted({
+            ...payload,
+            onLoaded: () => {
+              onLoaded();
+              resolve();
+            },
+          });
         }
       })
       .catch(() => {
@@ -35,21 +37,45 @@ export const loadScriptRemote = (payload: {
           };
 
           onSocket.connect(onConnect);
-          getScript(payload).remove();
         });
       });
   });
 };
 
+const onServiceStarted = (payload: {
+  serviceKey: ServiceKey;
+  onPending?: () => void;
+  onLoaded?: () => void;
+  onFailed?: () => void;
+  filename?: string;
+}) => {
+  const { serviceKey } = payload;
+
+  const onStarted = () => {
+    loadScript(payload).catch(() => {
+      onServiceStarted(payload);
+    });
+    offSocket.serviceStarted(serviceKey, onStarted);
+  };
+
+  onSocket.serviceStarted(serviceKey, onStarted);
+}
+
 const loadScript = (payload: {
   serviceKey: ServiceKey;
   onPending?: () => void;
   onLoaded?: () => void;
+  onFailed?: () => void;
   filename?: string;
 }) => {
-  const { onPending = () => {}, onLoaded = () => {} } = payload;
+  const { onPending = () => {}, onLoaded = () => {}, onFailed = () => {} } = payload;
+  const script = getScript(payload);
   onPending();
-  return getScript(payload).load().then(onLoaded);
+  return script.load().then(onLoaded).catch((error) => {
+    onFailed();
+    script.remove();
+    throw error;
+  });
 };
 
 const getScript = (payload: {
