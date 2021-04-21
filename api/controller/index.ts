@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createSocket } from "libs/socket";
-import { ServiceKey, ServiceState } from "libs/types";
+import { ServiceKey, ServiceState } from "common/types";
 
 export const getServicesState = () => {
   return axios.get("/controller/api/services/state")

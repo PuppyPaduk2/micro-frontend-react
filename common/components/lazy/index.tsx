@@ -1,8 +1,8 @@
 import React, { FC, ReactChild, ReactElement, useEffect, useState, lazy } from 'react';
-import { ServiceKey } from 'libs/types';
+import { ServiceKey } from 'common/types';
 import { loadExpose } from 'libs/dynamic-script';
-import { ErrorBoundary } from "libs/components/error-boundary";
-import { loadScriptRemote } from 'libs/load-script-remote';
+import { ErrorBoundary } from "common/components";
+import { loadScriptRemote } from 'common/load-script-remote';
 
 type Props = {
   serviceKey: ServiceKey,

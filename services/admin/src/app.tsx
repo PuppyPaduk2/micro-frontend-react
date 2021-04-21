@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout } from "libs/components/layout";
+import { Layout } from "common/components";
 
 import { Services } from "./services";
 

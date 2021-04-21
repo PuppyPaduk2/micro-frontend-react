@@ -1,9 +1,10 @@
 import { Button, Space, Tag } from "antd";
 import { stopService, startService, getServiceProcessLog, onSocket, offSocket } from "api/controller";
-import { useStateGlobal } from "libs/hooks/use-state-global";
-import { useService } from "libs/hooks/use-service";
-import { ServiceKey } from "libs/types";
+import { useStateGlobal } from "libs/use-state-global";
+import { ServiceKey } from "common/types";
 import React, { FC, useCallback, useEffect } from "react";
+
+import { useService } from "./use-service";
 
 type ToolsBarProps = {
   serviceKey: ServiceKey;

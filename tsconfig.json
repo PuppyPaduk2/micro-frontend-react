@@ -17,7 +17,8 @@
       "settings": ["./settings"],
       "api": ["./api"],
       "libs": ["./libs"],
-      "services": ["./services"]
+      "services": ["./services"],
+      "common": ["./common"]
     }
   },
   "exclude": ["node_modules"],

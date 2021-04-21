@@ -42,6 +42,7 @@ module.exports = {
       api: path.resolve(process.cwd(), "./api"),
       libs: path.resolve(process.cwd(), "./libs"),
       services: path.resolve(process.cwd(), "./services"),
+      common: path.resolve(process.cwd(), "./common"),
     },
     modules: [
       path.resolve(process.cwd(), "./src"),

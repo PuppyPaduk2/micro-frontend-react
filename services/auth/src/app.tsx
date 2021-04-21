@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { Button, Input, Space } from "antd";
-import { useStateGlobal } from 'libs/hooks/use-state-global';
+import { useStateGlobal } from 'libs/use-state-global';
 
 export const App: React.FC = () => {
   useEffect(() => {

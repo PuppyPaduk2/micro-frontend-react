@@ -1,5 +1,5 @@
 import { getServiceState, offSocket, onSocket } from "api/controller";
-import { ServiceKey, ServiceState } from "libs/types";
+import { ServiceKey, ServiceState } from "common/types";
 import { useEffect, useState } from "react";
 
 export const useService = (

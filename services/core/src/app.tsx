@@ -1,7 +1,6 @@
 import React, { FC, useEffect } from 'react';
-import { Layout } from "libs/components/layout";
-import { Lazy } from "libs/components/lazy";
-import { requestExpose } from "libs/request-expose";
+import { Layout, Lazy } from "common/components";
+import { requestExpose } from "common/request-expose";
 
 export const App: FC = () => {
   useEffect(() => {

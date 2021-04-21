@@ -5,7 +5,7 @@ import childProcess from "child_process";
 import axios from 'axios';
 
 import servicesConfig from "settings/services-config.json";
-import { ServiceConfig, ServiceKey, ServicePlaceOfStart, ServiceProcess, ServiceState } from "libs/types";
+import { ServiceConfig, ServiceKey, ServicePlaceOfStart, ServiceProcess, ServiceState } from "common/types";
 
 const port = process.env.PORT || servicesConfig.controller.port;
 const app = express();

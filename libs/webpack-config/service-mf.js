@@ -7,9 +7,9 @@ const shared = {
   react: { singleton: true },
   "react-dom": { singleton: true },
   antd: { singleton: true },
-  "libs/socket": { singleton: true },
-  "libs/dynamic-script": { singleton: true },
-  "libs/hooks/use-state-global": { singleton: true },
+  // "libs/socket": { singleton: true },
+  // "libs/dynamic-script": { singleton: true },
+  // "libs/hooks/use-state-global": { singleton: true },
 };
 
 const createMf = (config) => {

@@ -1,12 +1,12 @@
 import React, { FC, useMemo, useState } from "react";
 import { Button, Drawer, Space, Table, Typography } from "antd";
-import { ServiceConfigWithKey, ServiceKey } from "libs/types";
+import { ServiceConfigWithKey, ServiceKey } from "common/types";
 import { ApiOutlined, PlayCircleOutlined, StopOutlined } from "@ant-design/icons";
 import servicesConfig from "settings/services-config.json"
+import { startService, stopService } from "api/controller";
 
 import { ServiceTools, ServiceToolsBar } from "./service-tools";
-import { startService, stopService } from "api/controller";
-import { useService } from "libs/hooks/use-service";
+import { useService } from "./use-service";
 
 const defServices: ServiceConfigWithKey[] = Object.entries(servicesConfig).map(([serviceKey, config]) => ({
   ...config,

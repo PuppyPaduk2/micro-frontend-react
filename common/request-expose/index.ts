@@ -1,6 +1,6 @@
 import { loadExpose } from "libs/dynamic-script";
-import { loadScriptRemote } from "libs/load-script-remote";
-import { ServiceKey } from "libs/types";
+import { loadScriptRemote } from "common/load-script-remote";
+import { ServiceKey } from "common/types";
 
 type Props = {
   serviceKey: ServiceKey;

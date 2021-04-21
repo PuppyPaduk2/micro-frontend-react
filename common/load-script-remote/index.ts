@@ -1,6 +1,6 @@
 import { getServiceState, offSocket, onSocket } from "api/controller";
 import { createScript } from "libs/dynamic-script";
-import { ServiceKey } from "libs/types";
+import { ServiceKey } from "common/types";
 import servicesConfig from "settings/services-config.json";
 
 export const loadScriptRemote = (payload: {
