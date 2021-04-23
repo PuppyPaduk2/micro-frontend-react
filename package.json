@@ -12,7 +12,6 @@
     "start-service-auth": "SERVICE_KEY=auth webpack serve -c ./webpack/service-auth.js",
     "start-service-dashboard": "SERVICE_KEY=dashboard webpack serve -c ./webpack/service-dashboard.js",
     "start-service-users": "SERVICE_KEY=users webpack serve -c ./webpack/service-users.js",
-
     "build-service-controller": "SERVICE_KEY=controller webpack -c ./webpack/service-controller.js",
     "build-service-admin": "SERVICE_KEY=admin webpack -c ./webpack/service-admin.js",
     "build-service-core": "SERVICE_KEY=core webpack -c ./webpack/service-core.js",
@@ -74,6 +73,7 @@
     "emittery": "^0.8.1",
     "express": "^4.17.1",
     "express-fingerprint": "^1.2.2",
+    "macaddress": "^0.5.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",

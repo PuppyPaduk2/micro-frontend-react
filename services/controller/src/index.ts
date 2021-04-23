@@ -75,6 +75,19 @@ io.on('connection', (socket) => {
 });
 
 app.use(express.json());
+app.use(Fingerprint({
+  parameters:[
+    FingerprintParams.useragent,
+    FingerprintParams.acceptHeaders,
+    // (_next, _req) => {
+    //   const req: any = _req;
+    //   const { visitorId } = req?.body ?? {};
+    //   const next: any = _next;
+
+    //   next(null, { visitorId });
+    // },
+  ],
+}));
 
 app.get("/api/services/state", (_req, res) => {
   res.send(servicesStates);
@@ -169,25 +182,8 @@ app.get("/for-controller/api/service/place-of-start", (_, res) => {
   res.end();
 });
 
-app.use(Fingerprint({
-  parameters:[
-    // Defaults
-    FingerprintParams.useragent,
-    FingerprintParams.acceptHeaders,
-    FingerprintParams.geoip,
-    // (_next, _req) => {
-    //   const req: any = _req;
-    //   const { visitorId } = req?.body ?? {};
-    //   const next: any = _next;
-
-    //   next(null, { visitorId });
-    // },
-  ],
-}));
-
 // For auth
 app.get('/api/nonce', async (_, res) => {
-  
   const saltRounds = 10;
   const nonce = await bcrypt.genSalt(saltRounds);
   res.send(nonce);
@@ -195,11 +191,9 @@ app.get('/api/nonce', async (_, res) => {
 });
 
 app.post("/api/sign-in", (req, res) => {
-  console.log(JSON.stringify(req.fingerprint, null, 2));
-  var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  console.log(ip)
-  const { visitorId } = req.body;
-  console.log(visitorId);
+  const { hash,  } = req.fingerprint ?? { hash: "" };
+  
+  console.log("hash", hash, req.fingerprint?.components);
   res.status(200);
   res.end();
 });

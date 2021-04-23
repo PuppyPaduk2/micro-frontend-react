@@ -28,7 +28,7 @@ const getServiceSettings = async (env = {}) => {
       ...settings.devServer,
       host: HOST_NAME,
       port: PORT,
-      public: configServices.core.publicHost,
+      public: HOST,
     },
   };
 };

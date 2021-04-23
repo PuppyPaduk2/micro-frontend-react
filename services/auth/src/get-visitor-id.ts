@@ -1,5 +1,7 @@
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
+const get = () => FingerprintJS.load().then(({ get }) => get());
+
 export const getVisitorId = () => {
-  return FingerprintJS.load().then(({ get }) => get()).then(({ visitorId }) => visitorId);
+  return get().then(() => get()).then(({ visitorId }) => visitorId);
 };

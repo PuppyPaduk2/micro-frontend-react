@@ -47,7 +47,7 @@ const getServiceSettingsFrontend = async (env = {}) => {
         // Started
         axios
           .post(
-            `http://${configServices.controller.publicHost}/api/service/${SERVICE_KEY}/started`,
+            `http://${configServices.controller.host}/api/service/${SERVICE_KEY}/started`,
             {
               placeOfStart: PLACE_OF_START,
             }
@@ -60,7 +60,7 @@ const getServiceSettingsFrontend = async (env = {}) => {
           if (!request) {
             request = axios
               .post(
-                `http://${configServices.controller.publicHost}/api/service/${SERVICE_KEY}/stopped`
+                `http://${configServices.controller.host}/api/service/${SERVICE_KEY}/stopped`
               )
               .finally(() => process.exit(0));
           }
@@ -73,13 +73,13 @@ const getServiceSettingsFrontend = async (env = {}) => {
           context: ["/controller/api"],
           pathRewrite: { "^/controller": "" },
           changeOrigin: true,
-          target: `http://${configServices.controller.publicHost}`,
+          target: `http://${configServices.controller.host}`,
           secure: false,
         },
         {
           context: ["/controller/socket"],
           pathRewrite: { "^/controller": "" },
-          target: `ws://${configServices.controller.publicHost}`,
+          target: `ws://${configServices.controller.host}`,
           ws: true,
           secure: false,
         },
@@ -88,11 +88,11 @@ const getServiceSettingsFrontend = async (env = {}) => {
             ([serviceKey]) =>
               serviceKey !== "controller" || serviceKey !== "admin"
           )
-          .map(([key, { publicHost }]) => ({
+          .map(([key, { host }]) => ({
             context: [`/${key}`],
             pathRewrite: { [`^/${key}`]: "" },
             changeOrigin: true,
-            target: `http://${publicHost}`,
+            target: `http://${host}`,
             secure: false,
           })),
       ],
