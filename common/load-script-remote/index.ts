@@ -1,13 +1,12 @@
 import { getServiceState, offSocket, onSocket } from "api/controller";
 import { createScript } from "libs/dynamic-script";
 import { ServiceKey } from "common/types";
-import servicesConfig from "settings/services-config.json";
 
 export const loadScriptRemote = (payload: {
   serviceKey: ServiceKey;
   onPending?: () => void;
   onLoaded?: () => void;
-  onFailed?: () => void;
+  onFailed?: (error: Error) => void;
   filename?: string,
 }) => {
   const { serviceKey, onLoaded = () => {} } = payload;
@@ -46,7 +45,7 @@ const onServiceStarted = (payload: {
   serviceKey: ServiceKey;
   onPending?: () => void;
   onLoaded?: () => void;
-  onFailed?: () => void;
+  onFailed?: (error: Error) => void;
   filename?: string;
 }) => {
   const { serviceKey } = payload;
@@ -65,24 +64,22 @@ const loadScript = (payload: {
   serviceKey: ServiceKey;
   onPending?: () => void;
   onLoaded?: () => void;
-  onFailed?: () => void;
+  onFailed?: (error: Error) => void;
   filename?: string;
 }) => {
   const { onPending = () => {}, onLoaded = () => {}, onFailed = () => {} } = payload;
-  const script = getScript(payload);
   onPending();
-  return script.load().then(onLoaded).catch((error) => {
-    onFailed();
+  return getScript(payload).then((script) => script.load().then(onLoaded).catch((error) => {
+    onFailed(error);
     script.remove();
     throw error;
-  });
+  }))
 };
 
-const getScript = (payload: {
+const getScript = async (payload: {
   serviceKey: ServiceKey;
   filename?: string;
 }) => {
   const { serviceKey, filename = "remote.js" } = payload;
-  const { publicPath } = servicesConfig[serviceKey];
-  return createScript(`${publicPath}/${filename}`);
+  return createScript(`${window.location.origin}/${serviceKey}/${filename}`);
 };

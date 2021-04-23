@@ -1,4 +1,4 @@
-import servicesConfig from "settings/services-config.json";
+import configServices from "configs/services.json";
 import { ChildProcessWithoutNullStreams } from "child_process";
 
 export type ServiceStatus = "stopped" | "run";
@@ -10,14 +10,12 @@ export type ServiceState = {
   placeOfStart: ServicePlaceOfStart;
 };
 
-export type ServicesConfig = typeof servicesConfig;
-
-export type ServiceKey = keyof ServicesConfig;
+export type ServiceKey = keyof typeof configServices;
 
 export type ServiceConfig = {
   port: number;
+  hostName: string;
   host: string;
-  publicPath: string;
 };
 
 export type ServiceConfigWithKey = ServiceConfig & {

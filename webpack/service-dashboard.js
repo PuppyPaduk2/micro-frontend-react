@@ -1,5 +1,5 @@
-const serviceSettings = require("../libs/webpack-config/service-settings");
-const { shared, createMf } = require("../libs/webpack-config/service-mf");
+const serviceSettings = require("../libs/webpack-config/__service-settings");
+const { shared, createMf } = require("../libs/webpack-config/__service-utils");
 
 module.exports = {
   ...serviceSettings,

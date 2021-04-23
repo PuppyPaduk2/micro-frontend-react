@@ -3,11 +3,14 @@ import * as http from "http";
 import { Server } from 'socket.io';
 import childProcess from "child_process";
 import axios from 'axios';
+import bcrypt from "bcrypt";
+import Fingerprint from 'express-fingerprint';
+import * as FingerprintParams from "express-fingerprint/lib/parameters";
 
-import servicesConfig from "settings/services-config.json";
+import configServices from "configs/services.json";
 import { ServiceConfig, ServiceKey, ServicePlaceOfStart, ServiceProcess, ServiceState } from "common/types";
 
-const port = process.env.PORT || servicesConfig.controller.port;
+const port = process.env.PORT;
 const app = express();
 
 const server = http.createServer(app);
@@ -138,9 +141,9 @@ app.post("/api/service/:serviceKey/stop", (req, res) => {
   const { serviceKey } = req.params;
 
   if (serviceKey) {
-    axios.post(`${servicesConfig[serviceKey as ServiceKey].publicPath}/for-controller/api/service/stop`)
+    axios.post(`${configServices[serviceKey as ServiceKey].host}/for-controller/api/service/stop`)
       .catch(() => {})
-      .finally(() => onServiceStop(serviceKey as ServiceKey));
+      .finally(() => onServiceStop(serviceKey as ServiceKey))
     res.status(200);
   } else {
     res.status(400);
@@ -166,18 +169,55 @@ app.get("/for-controller/api/service/place-of-start", (_, res) => {
   res.end();
 });
 
+app.use(Fingerprint({
+  parameters:[
+    // Defaults
+    FingerprintParams.useragent,
+    FingerprintParams.acceptHeaders,
+    FingerprintParams.geoip,
+    // (_next, _req) => {
+    //   const req: any = _req;
+    //   const { visitorId } = req?.body ?? {};
+    //   const next: any = _next;
+
+    //   next(null, { visitorId });
+    // },
+  ],
+}));
+
+// For auth
+app.get('/api/nonce', async (_, res) => {
+  
+  const saltRounds = 10;
+  const nonce = await bcrypt.genSalt(saltRounds);
+  res.send(nonce);
+  res.end();
+});
+
+app.post("/api/sign-in", (req, res) => {
+  console.log(JSON.stringify(req.fingerprint, null, 2));
+  var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  console.log(ip)
+  const { visitorId } = req.body;
+  console.log(visitorId);
+  res.status(200);
+  res.end();
+});
+
 app.get("*", (_, res) => {
   res.send("Server app");
   res.end();
 });
 
+server.on("listening", async () => {
+});
+
 server.listen(port, () => {
   console.log(`http://localhost:${port}`);
 
-  console.log("controller started");
-  Object.entries(servicesConfig).forEach(([serviceKey, { publicPath }]: [string, ServiceConfig]) => {
-    axios.get(publicPath)
-      .then(() => axios.get(`${publicPath}/for-controller/api/service/place-of-start`))
+  Object.entries(configServices).forEach(([serviceKey, { host }]: [string, ServiceConfig]) => {
+    axios.get(`http://${host}`)
+      .then(() => axios.get(`http://${host}/for-controller/api/service/place-of-start`))
       .then(({ data: placeOfStart }) => onServiceStarted(serviceKey as ServiceKey, placeOfStart))
       .catch(() => onServiceStopped(serviceKey as ServiceKey))
       .finally(() => console.log(serviceKey, servicesStates[serviceKey as ServiceKey]));

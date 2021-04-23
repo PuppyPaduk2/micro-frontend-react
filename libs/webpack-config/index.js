@@ -1,9 +1,5 @@
-const baseSettings = require("./base-settings");
-const serviceSettings = require("./service-settings");
-const serviceMf = require("./service-mf");
+const { getBaseSettings } = require("./base-settings");
 
 module.exports = {
-  baseSettings,
-  serviceSettings,
-  serviceMf,
+  getBaseSettings,
 };

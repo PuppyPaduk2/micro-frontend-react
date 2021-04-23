@@ -14,7 +14,7 @@
     "resolveJsonModule": true,
     "baseUrl": "./",
     "paths": {
-      "settings": ["./settings"],
+      "configs": ["./configs"],
       "api": ["./api"],
       "libs": ["./libs"],
       "services": ["./services"],

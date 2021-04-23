@@ -1,3 +1,3 @@
-const serviceSettings = require("../libs/webpack-config/service-settings");
+const { getServiceSettingsFrontend } = require("../common/webpack-config");
 
-module.exports = serviceSettings;
+module.exports = getServiceSettingsFrontend();

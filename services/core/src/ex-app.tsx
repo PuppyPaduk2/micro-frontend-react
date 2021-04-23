@@ -12,7 +12,7 @@ export const App: FC = () => {
 
   return (
     <Layout footer={<>@service/core</>}>
-      <Lazy serviceKey="auth" scope="auth" expose="./App" failed={<>ERRROR</>} />
+      <Lazy serviceKey="auth" scope="auth" expose="./App" />
       <Lazy serviceKey="dashboard" scope="dashboard" expose="./App" />
       <Lazy serviceKey="users" scope="users" expose="./App" />
     </Layout>

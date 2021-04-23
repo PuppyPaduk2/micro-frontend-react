@@ -2,13 +2,13 @@ import React, { FC, useMemo, useState } from "react";
 import { Button, Drawer, Space, Table, Typography } from "antd";
 import { ServiceConfigWithKey, ServiceKey } from "common/types";
 import { ApiOutlined, PlayCircleOutlined, StopOutlined } from "@ant-design/icons";
-import servicesConfig from "settings/services-config.json"
+import configServices from "configs/services.json";
 import { startService, stopService } from "api/controller";
 
 import { ServiceTools, ServiceToolsBar } from "./service-tools";
 import { useService } from "./use-service";
 
-const defServices: ServiceConfigWithKey[] = Object.entries(servicesConfig).map(([serviceKey, config]) => ({
+const defServices: ServiceConfigWithKey[] = Object.entries(configServices).map(([serviceKey, config]) => ({
   ...config,
   serviceKey: serviceKey as ServiceKey,
 }));
@@ -55,7 +55,6 @@ const Actions: FC<ServiceConfigWithKey & { onOpenTools?: (serviceKey: ServiceKey
 };
 
 export const Services: FC = () => {
-  const [services] = useState<ServiceConfigWithKey[]>(defServices);
   const [serviceKey, setServiceKey] = useState<ServiceKey | null>(null);
 
   const columns = useMemo(() => [
@@ -88,7 +87,7 @@ export const Services: FC = () => {
 
   return (
     <>
-      <Table rowKey="serviceKey" dataSource={services} columns={columns} />
+      <Table rowKey="serviceKey" dataSource={defServices} columns={columns} />
       <Drawer
         title={serviceKey && <ServiceToolsBar serviceKey={serviceKey} />}
         visible={Boolean(serviceKey)} onClose={() => setServiceKey(null)}

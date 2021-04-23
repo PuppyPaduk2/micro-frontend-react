@@ -1,10 +1,20 @@
 import React, { FC, useEffect } from 'react';
 import { Button, Input, Space } from "antd";
 import { useStateGlobal } from 'libs/use-state-global';
+import { getVisitorId } from './get-visitor-id';
+import axios from 'axios';
 
 export const App: React.FC = () => {
   useEffect(() => {
     console.log("Auth");
+
+    axios.get("/controller/api/nonce").then(({ data: nonce }) => {
+      console.log(nonce)
+    });
+
+    getVisitorId().then((visitorId) => {
+      axios.post("/controller/api/sign-in", { visitorId });
+    });
   }, []);
 
   return (

@@ -27,10 +27,10 @@ export const createScript = (src: string) => {
           scripts[src].loaded = true;
           resolve();
         };
-        cache.element.onerror = () => {
+        cache.element.onerror = function(_event, _source, _lineno, _colno, _error) {
           console.error(`Dynamic Script Error: ${src}`);
           scripts[src].failed = true;
-          reject();
+          reject(_error);
         };
         document.getElementsByTagName("head")[0].appendChild(cache.element);
       });
