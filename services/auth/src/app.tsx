@@ -1,21 +1,13 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { Button, Input, Space } from "antd";
 import { useStateGlobal } from 'libs/use-state-global';
-import { getVisitorId } from './get-visitor-id';
-import axios from 'axios';
+import { signIn } from 'api/auth';
+import { useAccess } from 'common/hooks';
 
 export const App: React.FC = () => {
-  useEffect(() => {
-    console.log("Auth");
+  const access = useAccess();
 
-    // axios.get("/controller/api/nonce").then(({ data: nonce }) => {
-    //   console.log(nonce)
-    // });
-
-    // getVisitorId().then((visitorId) => {
-    //   axios.post("/controller/api/sign-in", { visitorId });
-    // });
-  }, []);
+  console.log("@access-auth", access);
 
   return (
     <div>
@@ -26,20 +18,13 @@ export const App: React.FC = () => {
 };
 
 const Form: FC = () => {
-  const [pass, setPass] = useStateGlobal("", "password", "auth/form");
-
-  const [visitorId, setVisitorId] = useStateGlobal("", "visitorId", "auth");
+  const [password, setPass] = useStateGlobal("", "password", "auth/form");
 
   return (
     <Space direction="vertical">
-      <div>66d9caf1463195aa75742bde77616d4b</div>
-      <div>{visitorId}</div>
-      <Input placeholder="Password" type="password" value={pass} onChange={(event) => setPass(event.currentTarget.value)}  />
+      <Input placeholder="Password" type="password" value={password} onChange={(event) => setPass(event.currentTarget.value)}  />
       <Button block type="primary" onClick={() => {
-        getVisitorId().then((visitorId) => {
-          setVisitorId(visitorId);
-          axios.post("/controller/api/sign-in", { visitorId });
-        });
+        signIn(password);
       }}>Send</Button>
     </Space>
   );

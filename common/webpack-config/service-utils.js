@@ -51,6 +51,7 @@ const setupShaderByDirs = () => {
     react: { singleton: true },
     "react-dom": { singleton: true },
     antd: { singleton: true },
+    axios: { singleton: true },
     ...getDependsByDir(commonDir),
     ...getDependsByDir(libsDir),
   };

@@ -24,11 +24,16 @@ const getServiceSettings = async (env = {}) => {
         path.resolve(process.cwd(), "./node_modules"),
       ],
     },
+    output: {
+      ...settings.output,
+      path: path.resolve(process.cwd(), `${SERVICE_KEY}/dist`),
+    },
     devServer: {
       ...settings.devServer,
       host: HOST_NAME,
       port: PORT,
       public: HOST,
+      contentBase: path.join(__dirname, `${SERVICE_KEY}/dist`),
     },
   };
 };

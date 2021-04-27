@@ -18,19 +18,21 @@ type Props = {
 export const Lazy: FC<Props> = (props) => {
   const { serviceKey, filename } = props;
   const [status, setStatus] = useState<null | "pending" | "loaded" | "failed">(null);
-  const [error, setError] = useState<null | Error>(null);
 
   useEffect(() => {
+    let mounted = true;
+
     loadScriptRemote({
       serviceKey,
       filename,
-      onPending: () => setStatus("pending"),
-      onLoaded: () => setStatus("loaded"),
-      onFailed: (error) => {
-        setStatus("failed");
-        setError(error);
-      },
+      onPending: () => mounted && setStatus("pending"),
+      onLoaded: () => mounted && setStatus("loaded"),
+      onFailed: () => mounted && setStatus("failed"),
     });
+
+    return () => {
+      mounted = false;
+    };
   }, [serviceKey, filename]);
 
   if (status === "pending") {
@@ -48,16 +50,7 @@ export const Lazy: FC<Props> = (props) => {
       </ErrorBoundary>
     );
   } else if (status === "failed") {
-    return (
-      <>
-        <div>
-          {error}
-        </div>
-        <div>
-          {props.failed ?? null}
-        </div>
-      </>
-    );
+    return props.failed ?? null;
   }
 
   return <></>;

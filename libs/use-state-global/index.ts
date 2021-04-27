@@ -78,37 +78,3 @@ const useSpace = (namespace: string = "__global"): Space => {
     return spaces[namespace]
   }, [namespace]);
 };
-
-// export const useGlobalState = <T>(
-//   initialValue: T,
-//   key: string,
-//   namespace?: string = "__global"
-// ): [T, (value: SetStateAction<T>) => void] => {
-//   const [state, _setState] = useState<T>(cache[key]?.state || initialValue);
-
-//   const setState = useCallback((value: SetStateAction<T>) => {
-//     cache[key].emitter.emit("set-state", value);
-//   }, []);
-
-//   useEffect(() => {
-//     if (!cache[key]) {
-//       cache[key] = { emitter: new Emittery(), state: initialValue };
-//     }
-
-//     const handler = (value: SetStateAction<T>) => {
-//       _setState(value);
-//     };
-
-//     cache[key].emitter.on("set-state", handler);
-
-//     return () => {
-//       cache[key].emitter.off("set-state", handler);
-//     };
-//   }, [key]);
-
-//   useEffect(() => {
-//     if (cache[key]) cache[key].state = state;
-//   }, [state]);
-
-//   return [state, setState];
-// };

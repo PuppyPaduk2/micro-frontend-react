@@ -2,8 +2,13 @@ import { requestExpose } from 'common/request-expose';
 import React, { FC, useEffect } from 'react';
 import { Button, Input, Space } from "antd";
 import { useStateGlobal } from 'libs/use-state-global';
+import { useAccess } from 'common/hooks';
 
 export const App: React.FC = () => {
+  const access = useAccess();
+
+  console.log("@access-dashboard", access);
+
   useEffect(() => {
     requestExpose({ serviceKey: "auth", scope: "auth", expose: "./guard" }).then(({ add }) => {
       console.log(add("dash1", 1));

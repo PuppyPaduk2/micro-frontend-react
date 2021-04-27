@@ -1,3 +1,6 @@
 [submodule "services/users"]
 	path = services/users
 	url = git@github.com:EvgenyiFedotov/micro-frontend-react-users.git
+[submodule "services/auth-be"]
+	path = services/auth-be
+	url = git@github.com:EvgenyiFedotov/micro-frontend-react-auth-be.git

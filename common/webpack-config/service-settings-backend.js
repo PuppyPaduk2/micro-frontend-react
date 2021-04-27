@@ -22,8 +22,8 @@ const getServiceSettingsBackend = async (arv = {}) => {
         },
       }),
       new NodemonPlugin({
-        script: "./dist/index.js",
-        watch: "./dist",
+        script: `./${SERVICE_KEY}/dist/index.js`,
+        watch: `./${SERVICE_KEY}/dist`,
         ext: "js,njk,json,ts,tsx",
       }),
     ],

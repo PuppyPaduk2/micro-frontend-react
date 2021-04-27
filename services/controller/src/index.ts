@@ -3,9 +3,6 @@ import * as http from "http";
 import { Server } from 'socket.io';
 import childProcess from "child_process";
 import axios from 'axios';
-import bcrypt from "bcrypt";
-import Fingerprint from 'express-fingerprint';
-import * as FingerprintParams from "express-fingerprint/lib/parameters";
 
 import configServices from "configs/services.json";
 import { ServiceConfig, ServiceKey, ServicePlaceOfStart, ServiceProcess, ServiceState } from "common/types";
@@ -75,19 +72,6 @@ io.on('connection', (socket) => {
 });
 
 app.use(express.json());
-app.use(Fingerprint({
-  parameters:[
-    FingerprintParams.useragent,
-    FingerprintParams.acceptHeaders,
-    // (_next, _req) => {
-    //   const req: any = _req;
-    //   const { visitorId } = req?.body ?? {};
-    //   const next: any = _next;
-
-    //   next(null, { visitorId });
-    // },
-  ],
-}));
 
 app.get("/api/services/state", (_req, res) => {
   res.send(servicesStates);
@@ -117,7 +101,7 @@ app.post("/api/service/:serviceKey/started", (req, res) => {
     res.status(400);
   }
 
-  console.log("service started", servicesStates[serviceKey as ServiceKey]);
+  console.log("service started", serviceKey, servicesStates[serviceKey as ServiceKey]);
 
   res.end();
 });
@@ -132,7 +116,7 @@ app.post("/api/service/:serviceKey/stopped", (req, res) => {
     res.status(400);
   }
 
-  console.log("service stopped", servicesStates[serviceKey as ServiceKey]);
+  console.log("service stopped", serviceKey, servicesStates[serviceKey as ServiceKey]);
 
   res.end();
 });
@@ -182,28 +166,9 @@ app.get("/for-controller/api/service/place-of-start", (_, res) => {
   res.end();
 });
 
-// For auth
-app.get('/api/nonce', async (_, res) => {
-  const saltRounds = 10;
-  const nonce = await bcrypt.genSalt(saltRounds);
-  res.send(nonce);
-  res.end();
-});
-
-app.post("/api/sign-in", (req, res) => {
-  const { hash,  } = req.fingerprint ?? { hash: "" };
-  
-  console.log("hash", hash, req.fingerprint?.components);
-  res.status(200);
-  res.end();
-});
-
 app.get("*", (_, res) => {
   res.send("Server app");
   res.end();
-});
-
-server.on("listening", async () => {
 });
 
 server.listen(port, () => {

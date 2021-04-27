@@ -1,15 +1,21 @@
-const serviceSettings = require("../libs/webpack-config/__service-settings");
-const { shared, createMf } = require("../libs/webpack-config/__service-utils");
+const {
+  getServiceSettingsFrontend,
+  serviceUtils,
+} = require("../common/webpack-config");
 
-module.exports = {
-  ...serviceSettings,
-  plugins: [
-    ...serviceSettings.plugins,
-    createMf({
-      name: "users",
-      exposes: {
-        "./App": "./exposes/app.ts",
-      },
-    }),
-  ],
+const { createModuleFederation, setupShaderByDirs } = serviceUtils;
+
+module.exports = async (env = {}) => {
+  const settings = await getServiceSettingsFrontend(env);
+
+  return {
+    ...settings,
+    plugins: [
+      ...settings.plugins,
+      await createModuleFederation(
+        {},
+        { name: "users", exposes: { "./App": "./exposes/app.ts" } }
+      ),
+    ],
+  };
 };

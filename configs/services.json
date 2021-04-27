@@ -19,6 +19,11 @@
     "hostName": "0.0.0.0",
     "host": "0.0.0.0:3010"
   },
+  "auth-be": {
+    "port": 3015,
+    "hostName": "0.0.0.0",
+    "host": "0.0.0.0:3015"
+  },
   "dashboard": {
     "port": 3020,
     "hostName": "0.0.0.0",

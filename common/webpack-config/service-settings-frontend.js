@@ -89,8 +89,8 @@ const getServiceSettingsFrontend = async (env = {}) => {
               serviceKey !== "controller" || serviceKey !== "admin"
           )
           .map(([key, { host }]) => ({
-            context: [`/${key}`],
-            pathRewrite: { [`^/${key}`]: "" },
+            context: [`/${key}/`],
+            pathRewrite: { [`^/${key}/`]: "/" },
             changeOrigin: true,
             target: `http://${host}`,
             secure: false,
