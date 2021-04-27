@@ -1,10 +1,12 @@
 import { checkAccess } from "api/auth";
-import { AxiosResponse } from "axios";
+import Emittery from "emittery";
 import { axiosInterceptor } from "libs/axios-interceptor";
 import { useStateGlobal } from "libs/use-state-global";
 import { useEffect } from "react";
 
 let promiseCheckAccess: null | Promise<boolean> = null;
+let onResponseUnsubscribe: null | Emittery.UnsubscribeFn = null;
+let onFailureUnsubscribe: null | Emittery.UnsubscribeFn = null;
 
 export const useAccess = (): boolean => {
   const [value, setValue] = useStateGlobal<boolean>(false, "access", "auth");
@@ -15,24 +17,32 @@ export const useAccess = (): boolean => {
       promiseCheckAccess.then(setValue).catch(setValue);
     }
 
-    const onResponse = (response: AxiosResponse) => {
-      if (response.config.url === "/auth-be/api/sign-in" && response.status === 200) {
-        setValue(true);
-      }
-    };
+    if (!onResponseUnsubscribe) {
+      onResponseUnsubscribe = axiosInterceptor.on("response", (response) => {
+        if (response.config.url === "/auth-be/api/sign-in" && response.status === 200) {
+          setValue(true);
+        }
+      });
+    }
 
-    const onFailure = (error: any) => {
-      if (error.response.status === 401) {
-        setValue(false);
-      }
-    };
-
-    axiosInterceptor.on("response", onResponse);
-    axiosInterceptor.on("failure", onFailure);
+    if (!onFailureUnsubscribe) {
+      onFailureUnsubscribe = axiosInterceptor.on("failure", (error) => {
+        if (error.response.status === 401) {
+          setValue(false);
+        }
+      });
+    }
 
     return () => {
-      axiosInterceptor.off("response", onResponse);
-      axiosInterceptor.off("failure", onFailure);
+      if (onResponseUnsubscribe) {
+        onResponseUnsubscribe();
+        onResponseUnsubscribe = null;
+      }
+
+      if (onFailureUnsubscribe) {
+        onFailureUnsubscribe();
+        onFailureUnsubscribe = null;
+      }
     };
   }, []);
 

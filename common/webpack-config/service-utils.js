@@ -47,7 +47,7 @@ const setupShaderByDirs = () => {
   const commonDir = path.resolve(process.cwd(), "common");
   const libsDir = path.relative(process.cwd(), "libs");
 
-  return {
+  const r = {
     react: { singleton: true },
     "react-dom": { singleton: true },
     antd: { singleton: true },
@@ -55,6 +55,10 @@ const setupShaderByDirs = () => {
     ...getDependsByDir(commonDir),
     ...getDependsByDir(libsDir),
   };
+
+  console.log(r);
+
+  return r;
 };
 
 const getServiceExposes = async (env = {}, exposes = {}) => {
