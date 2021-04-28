@@ -1,15 +1,20 @@
 import { checkAccess } from "api/auth";
 import Emittery from "emittery";
 import { axiosInterceptor } from "libs/axios-interceptor";
-import { useStateGlobal } from "libs/use-state-global";
+import { SetStateAction, useStateGlobal } from "libs/use-state-global";
 import { useEffect } from "react";
 
 let promiseCheckAccess: null | Promise<boolean> = null;
 let onResponseUnsubscribe: null | Emittery.UnsubscribeFn = null;
 let onFailureUnsubscribe: null | Emittery.UnsubscribeFn = null;
+let countListeners: number = 0;
 
-export const useAccess = (): boolean => {
-  const [value, setValue] = useStateGlobal<boolean>(false, "access", "auth");
+export const useStateAccess = () => {
+  return useStateGlobal<boolean>(false, "access", "auth");
+};
+
+export const useAccess = (): [boolean, (value: SetStateAction<boolean>) => void] => {
+  const [value, setValue] = useStateAccess();
 
   useEffect(() => {
     if (!promiseCheckAccess) {
@@ -17,15 +22,22 @@ export const useAccess = (): boolean => {
       promiseCheckAccess.then(setValue).catch(setValue);
     }
 
-    if (!onResponseUnsubscribe) {
+    if (!countListeners) {
       onResponseUnsubscribe = axiosInterceptor.on("response", (response) => {
-        if (response.config.url === "/auth-be/api/sign-in" && response.status === 200) {
+        const { url } = response.config;
+        const is200 = response.status === 200;
+        const isSignIn = url === "/auth-be/api/sign-in";
+        const isSignOut = url === "/auth-be/api/sign-out";
+
+        if (isSignIn && is200) {
           setValue(true);
+        } else if (isSignOut && is200) {
+          setValue(false);
         }
       });
     }
 
-    if (!onFailureUnsubscribe) {
+    if (!countListeners) {
       onFailureUnsubscribe = axiosInterceptor.on("failure", (error) => {
         if (error.response.status === 401) {
           setValue(false);
@@ -33,18 +45,22 @@ export const useAccess = (): boolean => {
       });
     }
 
+    countListeners += 1;
+
     return () => {
-      if (onResponseUnsubscribe) {
+      countListeners -= 1;
+
+      if (!countListeners && onResponseUnsubscribe) {
         onResponseUnsubscribe();
         onResponseUnsubscribe = null;
       }
 
-      if (onFailureUnsubscribe) {
+      if (!countListeners && onFailureUnsubscribe) {
         onFailureUnsubscribe();
         onFailureUnsubscribe = null;
       }
     };
   }, []);
 
-  return value;
+  return [value, setValue];
 };

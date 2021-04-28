@@ -9,3 +9,7 @@ export const checkAccess = (): Promise<boolean> => {
 export const signIn = (password: string) => {
   return axios.post("/auth-be/api/sign-in", { password });
 };
+
+export const signOut = () => {
+  return axios.post("/auth-be/api/sign-out");
+};

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Emittery from 'emittery';
 import { v4 as uuid } from "uuid";
 
-type SetStateAction<S> = S | ((prevState: S) => S);
+export type SetStateAction<S> = S | ((prevState: S) => S);
 
 type Cell<T> = {
   emitter: Emittery;
@@ -17,6 +17,7 @@ const spaces: Record<string, Space> = {
 
 const SET_VALUE = "set-state";
 
+// TODO After unmounted not work setValue
 export const useStateGlobal = <T>(
   initialValue: T,
   key?: string,
